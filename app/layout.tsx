@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGrotesk } from "next/font/google";
 
 import "./globals.css";
-import ThemeProvider from "./ThemeProvider";
+import ThemeProvider from "@context/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
