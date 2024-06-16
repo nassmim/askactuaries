@@ -15,7 +15,6 @@ const NavLink = ({
   isActive: boolean;
   isCollapsible?: boolean;
 }) => {
-  console.log(isCollapsible);
   return (
     <Link
       key={link.route}
