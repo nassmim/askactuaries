@@ -4,29 +4,39 @@ import React, {
   createContext,
   useState,
   useEffect,
-  useCallback,
   useContext,
+  useCallback,
 } from "react";
 
-import { DARK_MODE, LIGHT_MODE } from "@/constants";
+import { ThemeName, themes } from "@/constants";
+import { LOCALSTORAGE_THEME_NAME, SYSTEM_MODE } from "@constants/themes";
 
 interface ThemeContextType {
-  mode: string;
-  setMode: (mode: string) => void;
+  mode: ThemeName;
+  setMode: (mode: ThemeName) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [mode, setMode] = useState("");
-
-  const setTheme = (mode: string) => {
-    setMode(mode);
-    document.documentElement.classList.add(mode);
-  };
+  const storedMode =
+    (localStorage.getItem(LOCALSTORAGE_THEME_NAME) as ThemeName) || SYSTEM_MODE;
+  const [mode, setMode] = useState<ThemeName>(storedMode);
 
   const handleThemeChange = useCallback(() => {
-    mode === DARK_MODE ? setTheme(LIGHT_MODE) : setTheme(DARK_MODE);
+    const darkMode = themes.dark.value;
+
+    if (
+      mode === darkMode ||
+      (mode === SYSTEM_MODE &&
+        window.matchMedia("(prefers-color-scheme:dark)").matches)
+    )
+      document.documentElement.classList.add(darkMode);
+    else document.documentElement.classList.remove(darkMode);
+
+    if (mode !== SYSTEM_MODE)
+      localStorage.setItem(LOCALSTORAGE_THEME_NAME, mode);
+    else localStorage.removeItem(LOCALSTORAGE_THEME_NAME);
   }, [mode]);
 
   useEffect(() => {
