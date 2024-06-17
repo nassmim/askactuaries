@@ -8,6 +8,7 @@ export const pages = {
   tags: "tags",
   profile: "profile",
   askQuestion: "ask-question",
+  question: "question",
 } as const;
 
 export type RouteType = (typeof pages)[keyof typeof pages];
