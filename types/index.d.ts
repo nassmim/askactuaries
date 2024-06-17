@@ -1,5 +1,28 @@
 import { BADGE_CRITERIA, RouteType } from "@/constants";
 
+export interface TagType {
+  _id: string;
+  name: string;
+  totalQuestions?: number;
+}
+
+export interface AuthorType {
+  _id: string;
+  name: string;
+  picture: string;
+}
+
+export interface QuestionType {
+  _id: string;
+  title: string;
+  tags: TagType[];
+  author: AuthorType;
+  upvotes: number;
+  views: number;
+  answers: Array<object>;
+  createdAt: Date;
+}
+
 export interface SidebarLink {
   imgURL: string;
   route: RouteType;

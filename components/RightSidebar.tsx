@@ -2,34 +2,35 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Tag from "./shared/Tag";
+import { QuestionType, TagType } from "@types";
 
-const popularTags = [
-  { _id: 1, name: "javascript", totalQuestions: 5 },
-  { _id: 4, name: "react", totalQuestions: 5 },
-  { _id: 5, name: "next", totalQuestions: 5 },
-  { _id: 6, name: "vue", totalQuestions: 5 },
-  { _id: 7, name: "redux", totalQuestions: 5 },
+const popularTags: TagType[] = [
+  { _id: "1", name: "javascript", totalQuestions: 5 },
+  { _id: "4", name: "react", totalQuestions: 5 },
+  { _id: "5", name: "next", totalQuestions: 5 },
+  { _id: "6", name: "vue", totalQuestions: 5 },
+  { _id: "7", name: "redux", totalQuestions: 5 },
 ];
 
-const topQuestions = [
+const topQuestions: Pick<QuestionType, "_id" | "title">[] = [
   {
-    _id: 1,
+    _id: "1",
     title: "How to use express as a custom server in NEXTJS",
   },
   {
-    _id: 2,
+    _id: "2",
     title: "How to use express as a custom server in NEXTJS",
   },
   {
-    _id: 3,
+    _id: "3",
     title: "How to use express as a custom server in NEXTJS",
   },
   {
-    _id: 4,
+    _id: "4",
     title: "How to use express as a custom server in NEXTJS",
   },
   {
-    _id: 5,
+    _id: "5",
     title: "How to use express as a custom server in NEXTJS",
   },
 ];

@@ -5,7 +5,6 @@ import { RouteType } from "@constants";
 import Image from "next/image";
 
 interface CustomInputProps {
-  route: RouteType;
   iconPosition: string;
   image: string;
   placeholder?: string;
@@ -13,7 +12,6 @@ interface CustomInputProps {
 }
 
 const LocalSearchBar = ({
-  route,
   iconPosition,
   image,
   placeholder,
