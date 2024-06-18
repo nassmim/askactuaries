@@ -89,41 +89,6 @@ const Question = ({ userId }: { userId: string }) => {
     form.setValue(questionFormFields.tags, newTags);
   };
 
-  const CustomFormField = ({
-    name,
-    label,
-    description,
-    formItemOtherClasses,
-    renderInput,
-  }: {
-    name: keyof FormType;
-    label: string;
-    description: string;
-    formItemOtherClasses?: string;
-    renderInput: (field: any) => React.ReactNode;
-  }) => {
-    return (
-      <FormField
-        control={form.control}
-        name={name}
-        render={({ field }) => (
-          <FormItem className={`flex w-full flex-col ${formItemOtherClasses}`}>
-            <FormLabel className="paragraph-semibold text-dark400_light800">
-              {label}
-              <span className="text-primary-500">*</span>
-            </FormLabel>
-            <FormControl className="mt-3.5">
-              {renderInput({ ...field })}
-            </FormControl>
-            <FormDescription className="body-regular mt-2.5 text-light-500">
-              {description}
-            </FormDescription>
-            <FormMessage className="text-red-500" />
-          </FormItem>
-        )}
-      />
-    );
-  };
   return (
     <Form {...form}>
       <form

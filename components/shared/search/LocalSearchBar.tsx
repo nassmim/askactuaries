@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@components/ui/input";
-import { RouteType } from "@constants";
 import Image from "next/image";
 
 interface CustomInputProps {
