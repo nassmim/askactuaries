@@ -67,7 +67,7 @@ export const deleteUser = async (params: IDeleteUserParams) => {
   if (!userToDelete) throw new Error("User has not been found");
 
   try {
-    const userQuestionsIds = await Question.find({ author: userToDelete._id });
+    // const userQuestionsIds = await Question.find({ author: userToDelete._id });
     Question.deleteMany({ author: userToDelete._id });
   } catch (err) {}
 
