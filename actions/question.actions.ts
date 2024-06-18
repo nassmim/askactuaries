@@ -1,8 +1,9 @@
 "use server";
 import { IQuestion, Question, Tag, User } from "@database/index";
 import { connectToDB } from "@lib/mongoose";
-import { IGetQuestions } from "@types";
+import { ICreateQuestionParams, IGetQuestions } from "@types";
 import { Schema } from "mongoose";
+import { revalidatePath } from "next/cache";
 
 export const getQuestions = async (params: IGetQuestions) => {
   await connectToDB().catch((error: Error) => {
@@ -12,7 +13,8 @@ export const getQuestions = async (params: IGetQuestions) => {
   try {
     const questions = await Question.find({})
       .populate({ path: "tags", model: Tag })
-      .populate({ path: "author", model: User });
+      .populate({ path: "author", model: User })
+      .sort({ createdAt: -1 });
 
     return questions;
   } catch (error) {
@@ -23,7 +25,7 @@ export const getQuestions = async (params: IGetQuestions) => {
   }
 };
 
-export const createQuestion = async (params) => {
+export const createQuestion = async (params: ICreateQuestionParams) => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });
@@ -69,4 +71,6 @@ export const createQuestion = async (params) => {
         (error instanceof Error ? error.message : error),
     );
   }
+
+  revalidatePath(path);
 };
