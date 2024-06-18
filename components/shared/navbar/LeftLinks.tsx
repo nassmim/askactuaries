@@ -63,6 +63,7 @@ const LeftLinks = ({
           </SheetClose>
         ) : (
           <NavLink
+            key={link.route}
             link={link}
             isActive={isActive}
             isCollapsible={isCollapsible}

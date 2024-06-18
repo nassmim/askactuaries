@@ -1,3 +1,4 @@
+import { getQuestions } from "@actions/question.actions";
 import QuestionCard from "@components/cards/QuestionCard";
 import SearchFilter from "@components/home/SearchFilter";
 import NoResult from "@components/shared/NoResult";
@@ -42,7 +43,10 @@ const questions: QuestionType[] = [
     createdAt: new Date("2021-09-01T12:00:00.000Z"),
   },
 ];
-const Home = () => {
+
+const Home = async () => {
+  const questions = await getQuestions({});
+  console.log(questions);
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
