@@ -1,4 +1,21 @@
 import { BADGE_CRITERIA, RouteType } from "@/constants";
+import { IUser } from "@database";
+import { Schema } from "mongoose";
+
+export interface IGetQuestions {
+  page?: number;
+  pageSize?: number;
+  searchQuery?: string;
+  filter?: string;
+}
+
+export interface ICreateQuestionParams {
+  title: string;
+  content: string;
+  tags: Schema.Types.ObjectId[];
+  author: Schema.Types.ObjectId[] | IUser;
+  path: string;
+}
 
 export interface TagType {
   _id: string;

@@ -9,7 +9,7 @@ export const QuestionFormSchema = z.object({
   title: z
     .string()
     .min(5, { message: "The title must be at least 5 characters." })
-    .max(100, { message: "The title can't exceed 200 characters" }),
+    .max(100, { message: "The title can't exceed 100 characters" }),
 
   explanation: z.string().min(100, {
     message:
@@ -20,5 +20,5 @@ export const QuestionFormSchema = z.object({
       z.string().min(2, { message: "Tag must be at least of 2 characters" }),
     )
     .min(1, { message: "You must add at least one tag for your question" })
-    .max(3, { message: "No more than 3 tags for one questions." }),
+    .max(3, { message: "No more than 3 tags for one question." }),
 });
