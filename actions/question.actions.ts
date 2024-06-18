@@ -1,11 +1,11 @@
 "use server";
 import { IQuestion, Question, Tag, User } from "@database/index";
 import { connectToDB } from "@lib/mongoose";
-import { ICreateQuestionParams, IGetQuestions } from "@types";
+import { ICreateQuestionParams, IGetQuestionsParams } from "@types";
 import { Schema } from "mongoose";
 import { revalidatePath } from "next/cache";
 
-export const getQuestions = async (params: IGetQuestions) => {
+export const getQuestions = async (params: IGetQuestionsParams) => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });

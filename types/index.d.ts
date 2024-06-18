@@ -2,7 +2,23 @@ import { BADGE_CRITERIA, RouteType } from "@/constants";
 import { IUser } from "@database";
 import { Schema } from "mongoose";
 
-export interface IGetQuestions {
+export interface IDeleteUserParams {
+  clerkId: string;
+}
+
+export interface IUpdateUserParams {
+  clerkId: string;
+  updateData: Partial<IUser>;
+  path: string;
+}
+export interface ICreateUserParams {
+  clerkId: string;
+  name: string;
+  username: string;
+  email: string;
+  picture: string;
+}
+export interface IGetQuestionsParams {
   page?: number;
   pageSize?: number;
   searchQuery?: string;

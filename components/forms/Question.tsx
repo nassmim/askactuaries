@@ -69,8 +69,8 @@ const Question = ({ userId }: { userId: string }) => {
     e: React.KeyboardEvent<HTMLInputElement>,
     field: any,
   ) => {
-    if (e.key === "Enter") e.preventDefault();
     if (e.key === "Enter" && field.name === questionFormFields.tags) {
+      e.preventDefault();
       const tagInput = e.target as HTMLInputElement;
       const tagValue = tagInput.value.trim();
 
@@ -112,7 +112,9 @@ const Question = ({ userId }: { userId: string }) => {
               {label}
               <span className="text-primary-500">*</span>
             </FormLabel>
-            <FormControl className="mt-3.5">{renderInput(field)}</FormControl>
+            <FormControl className="mt-3.5">
+              {renderInput({ ...field })}
+            </FormControl>
             <FormDescription className="body-regular mt-2.5 text-light-500">
               {description}
             </FormDescription>
@@ -128,15 +130,27 @@ const Question = ({ userId }: { userId: string }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-10"
       >
-        <CustomFormField
+        <FormField
+          control={form.control}
           name={questionFormFields.title}
-          label="Question Title"
-          description="Be specific and imagine you're asking a question to another person in person."
-          renderInput={(field) => (
-            <Input
-              className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-              {...field}
-            />
+          render={({ field }) => (
+            <FormItem className={`flex w-full flex-col`}>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
+                Question Title
+                <span className="text-primary-500">*</span>
+              </FormLabel>
+              <FormControl className="mt-3.5">
+                <Input
+                  className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription className="body-regular mt-2.5 text-light-500">
+                Be specific and imagine you`&apos;`re asking a question to
+                another person in person.
+              </FormDescription>
+              <FormMessage className="text-red-500" />
+            </FormItem>
           )}
         />
 
@@ -191,40 +205,54 @@ const Question = ({ userId }: { userId: string }) => {
             </FormItem>
           )}
         />
-        <CustomFormField
+
+        <FormField
+          control={form.control}
           name={questionFormFields.tags}
-          label={`${questionFormFields.tags.charAt(0).toUpperCase()} ${questionFormFields.tags.slice(1)}`}
-          description="Add up to 3 tags to describe what your question is about. Press enter to add a tag."
-          renderInput={(field) => (
-            <>
-              <Input
-                placeholder="Add tags..."
-                className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                onKeyDown={(e) => handleInputKeyDown(e, field)}
-              />
-              {field.value.length > 0 && (
-                <div className="flex-start mt-2.5 gap-2.5">
-                  {field.value.map((tag: any) => (
-                    <Badge
-                      key={tag}
-                      className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 border-none px-4 py-2 capitalize"
-                      onClick={() => handleTagRemove(tag, field)}
-                    >
-                      {tag}
-                      <Image
-                        src="/assets/icons/close.svg"
-                        alt="Close icon"
-                        width={12}
-                        height={12}
-                        className="cursor-pointer object-contain invert-0 dark:invert"
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </>
+          render={({ field }) => (
+            <FormItem className={`flex w-full flex-col`}>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
+                Tags
+                <span className="text-primary-500">*</span>
+              </FormLabel>
+              <FormControl className="mt-3.5">
+                <>
+                  <Input
+                    placeholder="Add tags..."
+                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                    onKeyDown={(e) => handleInputKeyDown(e, field)}
+                  />
+                  {field.value.length > 0 && (
+                    <div className="flex-start mt-2.5 gap-2.5">
+                      {field.value.map((tag: any) => (
+                        <Badge
+                          key={tag}
+                          className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 border-none px-4 py-2 capitalize"
+                          onClick={() => handleTagRemove(tag, field)}
+                        >
+                          {tag}
+                          <Image
+                            src="/assets/icons/close.svg"
+                            alt="Close icon"
+                            width={12}
+                            height={12}
+                            className="cursor-pointer object-contain invert-0 dark:invert"
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </>
+              </FormControl>
+              <FormDescription className="body-regular mt-2.5 text-light-500">
+                Add up to 3 tags to describe what your question is about. Press
+                enter to add a tag.
+              </FormDescription>
+              <FormMessage className="text-red-500" />
+            </FormItem>
           )}
         />
+
         <Button
           type="submit"
           className="primary-gradient w-fit !text-light-900"
