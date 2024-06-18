@@ -50,6 +50,7 @@ const Question = ({ userId }: { userId: string }) => {
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(userId),
+        path: pathName,
       });
     } catch (error) {
       console.log(
@@ -152,7 +153,7 @@ const Question = ({ userId }: { userId: string }) => {
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(_evt, editor) => (editorRef.current = editor)}
-                  initialValue="ddfkldnfnfsd"
+                  initialValue=""
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{

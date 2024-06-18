@@ -12,7 +12,7 @@ export interface IGetQuestions {
 export interface ICreateQuestionParams {
   title: string;
   content: string;
-  tags: Schema.Types.ObjectId[];
+  tags: string[];
   author: Schema.Types.ObjectId[] | IUser;
   path: string;
 }

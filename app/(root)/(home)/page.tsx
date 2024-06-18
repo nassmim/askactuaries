@@ -7,46 +7,11 @@ import LocalSearchBar from "@components/shared/search/LocalSearchBar";
 import { Button } from "@components/ui/button";
 import { pages } from "@constants";
 import { HomePageFilters } from "@constants/filters";
-import { QuestionType } from "@types";
 import Link from "next/link";
-
-const questions: QuestionType[] = [
-  {
-    _id: "1",
-    title: "Cascading deletes in SQLAlchemy",
-    tags: [
-      { _id: "1", name: "python" },
-      { _id: "2", name: "sql" },
-    ],
-    author: {
-      _id: "1",
-      name: "John Doe",
-      picture: "john-doe.jpg",
-    },
-    upvotes: 1000000000,
-    views: 100,
-    answers: [],
-    createdAt: new Date("2021-09-01T12:00:00.000Z"),
-  },
-  {
-    _id: "2",
-    title: "How to center a div element",
-    tags: [{ _id: "3", name: "CSCC" }],
-    author: {
-      _id: "1",
-      name: "John Doe",
-      picture: "john-doe.jpg",
-    },
-    upvotes: 10,
-    views: 100,
-    answers: [],
-    createdAt: new Date("2021-09-01T12:00:00.000Z"),
-  },
-];
 
 const Home = async () => {
   const questions = await getQuestions({});
-  console.log(questions);
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
