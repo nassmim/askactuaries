@@ -29,7 +29,6 @@ const Home = async () => {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchBar
-          route="/"
           iconPosition="left"
           image="/assets/icons/search.svg"
           placeholder="Search for questions"
