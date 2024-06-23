@@ -22,11 +22,13 @@ import Image from "next/image";
 import { createQuestion } from "@actions/question.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { pages } from "@constants";
+import { useTheme } from "@context/ThemeProvider";
 
 type FormType = z.infer<typeof QuestionFormSchema>;
 const type: string = "Create";
 
 const Question = ({ userId }: { userId: string }) => {
+  const { mode } = useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -163,6 +165,11 @@ const Question = ({ userId }: { userId: string }) => {
                       "codesample | bold italic forecolor | alignleft aligncenter " +
                       "alignright alignjustify | bullist numlist outdent indent | ",
                     content_style: "body { font-family:Inter; font-size:16px }",
+                    skin: mode === themes.dark.value ? "oxide-dark" : "oxide",
+                    content_css:
+                      mode === themes.dark.value
+                        ? themes.dark.value
+                        : themes.light.value,
                   }}
                 />
               </FormControl>

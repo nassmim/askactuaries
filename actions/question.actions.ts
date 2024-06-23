@@ -1,9 +1,36 @@
 "use server";
 import { IQuestion, Question, Tag, User } from "@database/index";
 import { connectToDB } from "@lib/mongoose";
-import { ICreateQuestionParams, IGetQuestionsParams } from "@types";
+import {
+  ICreateQuestionParams,
+  IGetQuestionsParams,
+  IGetQuestionParams,
+} from "@types";
 import { Schema } from "mongoose";
 import { revalidatePath } from "next/cache";
+
+export const getQuestion = async (params: IGetQuestionParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  try {
+    const question = await Question.findById(params.questionId)
+      .populate({ path: "tags", model: Tag, select: "_id name" })
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id clerkId name picture",
+      });
+
+    return question;
+  } catch (error) {
+    throw new Error(
+      "Error while trying to fetch the question." +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+};
 
 export const getQuestions = async (params: IGetQuestionsParams) => {
   await connectToDB().catch((error: Error) => {
