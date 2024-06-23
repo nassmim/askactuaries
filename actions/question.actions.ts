@@ -52,7 +52,7 @@ export const createQuestion = async (params: ICreateQuestionParams) => {
         { $setOnInsert: { name: tag }, $push: { question: question._id } },
         { upsert: true, new: true },
       );
-      console.log(tagFromDB);
+
       tagDocumentsIds.push(tagFromDB._id);
     }
   } catch (error) {

@@ -131,7 +131,10 @@ const Question = ({ userId }: { userId: string }) => {
               <FormControl className="mt-3.5">
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
-                  onInit={(_evt, editor) => (editorRef.current = editor)}
+                  onInit={(_evt, editor) => {
+                    // @ts-ignore
+                    editorRef.current = editor;
+                  }}
                   initialValue=""
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}

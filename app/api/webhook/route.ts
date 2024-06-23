@@ -8,7 +8,7 @@ import { pages } from "@constants";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+  const WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
     throw new Error(
@@ -57,9 +57,9 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   let dataToSend;
-
   switch (eventType) {
-    case "user.created" || "user.updated": {
+    case "user.created":
+    case "user.updated": {
       const {
         id,
         email_addresses,
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
 
       const userData = {
         email: email_addresses[0].email_address,
-        name: `${first_name} ${last_name && last_name}`,
+        name: `${first_name}${last_name ? " " + last_name : ""}`,
         username: username!,
         picture: image_url,
       };
