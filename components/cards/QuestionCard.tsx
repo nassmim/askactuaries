@@ -40,21 +40,21 @@ const QuestionCard = ({ question }: { question: QuestionType }) => {
           image="/assets/icons/like.svg"
           alt="Upvotes"
           value={formatNumber(question.upvotes)}
-          title="Votes"
+          title={`${question.upvotes > 1 ? "Upvotes" : "Upvote"}`}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
           image="/assets/icons/message.svg"
           alt="messages"
           value={formatNumber(question.answers.length)}
-          title="Answers"
+          title={`${question.answers.length > 1 ? "Answers" : "Answer"}`}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
           image="/assets/icons/eye.svg"
           alt="views"
           value={formatNumber(question.views)}
-          title="Views"
+          title={`${question.views > 1 ? "Views" : "View"}`}
           textStyles="small-medium text-dark400_light800"
         />
       </div>

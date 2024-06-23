@@ -37,6 +37,30 @@ export interface ICreateUserParams {
   email: string;
   picture: string;
 }
+
+export interface IGetQuestionAnswersParams {
+  questionId: string;
+  sortBy?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ICreateAnswerParams {
+  content: string;
+  author: string;
+  questionId: string;
+  path: string;
+}
+
+export interface IGetUserQuestionsParams {
+  questionId: string;
+  userId: string | undefined;
+}
+
+export interface IGetQuestionParams {
+  questionId: string;
+}
+
 export interface IGetQuestionsParams {
   page?: number;
   pageSize?: number;

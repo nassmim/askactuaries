@@ -22,3 +22,11 @@ export const QuestionFormSchema = z.object({
     .min(1, { message: "You must add at least one tag for your question" })
     .max(3, { message: "No more than 3 tags for one question." }),
 });
+
+export const answerFormFields = {
+  answer: "answer",
+} as const;
+
+export const AnswerFormSchema = z.object({
+  answer: z.string(),
+});
