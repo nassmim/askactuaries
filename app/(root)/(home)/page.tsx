@@ -10,7 +10,12 @@ import { HomePageFilters } from "@constants/filters";
 import Link from "next/link";
 
 const Home = async () => {
-  const questions = await getQuestions({});
+  let questions;
+  try {
+    questions = await getQuestions({});
+  } catch (error) {
+    return;
+  }
 
   return (
     <>

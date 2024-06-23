@@ -4,9 +4,24 @@ import { connectToDB } from "@lib/mongoose";
 import {
   ICreateUserParams,
   IDeleteUserParams,
+  IGetAllUsersParams,
   IUpdateUserParams,
 } from "@types";
 import { revalidatePath } from "next/cache";
+
+export const createUser = async (params: ICreateUserParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  const newUser = await User.create(params).catch((error) => {
+    throw new Error(
+      "Issue while trying to create a new user: " +
+        (error instanceof Error ? error.message : error),
+    );
+  });
+  return newUser;
+};
 
 export const updateUser = async (params: IUpdateUserParams) => {
   await connectToDB().catch((error: Error) => {
@@ -25,20 +40,6 @@ export const updateUser = async (params: IUpdateUserParams) => {
   revalidatePath(path);
 };
 
-export const createUser = async (params: ICreateUserParams) => {
-  await connectToDB().catch((error: Error) => {
-    throw new Error(error.message);
-  });
-
-  const newUser = await User.create(params).catch((error) => {
-    throw new Error(
-      "Issue while trying to create a new user: " +
-        (error instanceof Error ? error.message : error),
-    );
-  });
-  return newUser;
-};
-
 export const getUserById = async (userId: string) => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
@@ -51,6 +52,25 @@ export const getUserById = async (userId: string) => {
     );
   });
   return user;
+};
+
+export const getAllUsers = async (params: IGetAllUsersParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  // const { page=1, pageSize=1, filter, searchQuery } = params
+
+  const users = User.find({})
+    .sort({ createdAt: -1 })
+    .catch((error) => {
+      throw new Error(
+        "Issue while trying to fetch the users: " +
+          (error instanceof Error ? error.message : error),
+      );
+    });
+
+  return { users };
 };
 
 export const deleteUser = async (params: IDeleteUserParams) => {

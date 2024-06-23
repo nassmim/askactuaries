@@ -29,7 +29,7 @@ const QuestionCard = ({ question }: { question: QuestionType }) => {
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
           href={`/profile/${question.author._id}`}
-          image="/assets/icons/avatar.svg"
+          image={question.author.picture}
           alt="user"
           value={question.author.name}
           title={`- asked ${getTimeStamp(question.createdAt)}`}
