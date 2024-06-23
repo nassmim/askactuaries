@@ -2,6 +2,25 @@ import { BADGE_CRITERIA, RouteType } from "@/constants";
 import { IUser } from "@database";
 import { Schema } from "mongoose";
 
+export interface IGetAllTagsParams {
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+  searchQuery?: string;
+}
+
+export interface IGetUserTopInteractedTagsParams {
+  userId: string;
+  limit?: number;
+}
+
+export interface IGetAllUsersParams {
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+  searchQuery?: string;
+}
+
 export interface IDeleteUserParams {
   clerkId: string;
 }

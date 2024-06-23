@@ -14,7 +14,7 @@ import { FilterType } from "@types";
 interface FilterProps {
   filters: FilterType[];
   otherClasses: string;
-  containerClasses: string;
+  containerClasses?: string;
 }
 
 const FilterSelect = ({
