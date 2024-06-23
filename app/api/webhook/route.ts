@@ -60,29 +60,7 @@ export async function POST(req: Request) {
   let dataToSend;
   console.log(eventType);
   switch (eventType) {
-    case "user.created": {
-      const {
-        id,
-        email_addresses,
-        image_url,
-        username,
-        first_name,
-        last_name,
-      } = evt.data;
-
-      const userData = {
-        email: email_addresses[0].email_address,
-        name: `${first_name}${last_name ? " " + last_name : ""}`,
-        username: username!,
-        picture: image_url,
-      };
-
-      dataToSend = await createUser({
-        clerkId: id,
-        ...userData,
-      });
-      break;
-    }
+    case "user.created":
     case "user.updated": {
       console.log("dans created or updated");
       const {
@@ -100,13 +78,21 @@ export async function POST(req: Request) {
         username: username!,
         picture: image_url,
       };
-      console.log("dans else");
-      console.log(userData);
-      dataToSend = await updateUser({
-        clerkId: id,
-        updateData: userData,
-        path: `/${pages.profile}/${id}`,
-      });
+
+      if (eventType === "user.created") {
+        dataToSend = await createUser({
+          clerkId: id,
+          ...userData,
+        });
+      } else {
+        console.log("dans else");
+        console.log(userData);
+        dataToSend = await updateUser({
+          clerkId: id,
+          updateData: userData,
+          path: `/${pages.profile}/${id}`,
+        });
+      }
       break;
     }
 
