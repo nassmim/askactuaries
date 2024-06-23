@@ -14,7 +14,11 @@ export const createAnswer = async (params: ICreateAnswerParams) => {
   const { content, author, questionId, path } = params;
 
   try {
-    const newAnswer = await new Answer({ content, author, questionId });
+    const newAnswer = await Answer.create({
+      content,
+      author,
+      question: questionId,
+    });
     await Question.findByIdAndUpdate(questionId, {
       $push: { answers: newAnswer._id },
     });
@@ -33,11 +37,11 @@ export const getQuestionAnswers = async (params: IGetQuestionAnswersParams) => {
   });
 
   try {
-    const answers = Answer.find({ question: questionId })
+    const answers = await Answer.find({ question: params.questionId })
       .populate("author", "_id clerkId name picture")
       .sort({ createdAt: -1 });
 
-    return answers;
+    return { answers };
   } catch (error) {
     throw new Error(
       "Error while trying to fetch the answers for this question." +

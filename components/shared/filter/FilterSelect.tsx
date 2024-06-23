@@ -13,7 +13,7 @@ import { FilterType } from "@types";
 
 interface FilterProps {
   filters: FilterType[];
-  otherClasses: string;
+  otherClasses?: string;
   containerClasses?: string;
 }
 

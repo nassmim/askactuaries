@@ -2,9 +2,11 @@ import { getQuestion } from "@actions/question.actions";
 import { getUserById } from "@actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import Answer from "@components/forms/Answer";
+import AllAnswers from "@components/shared/AllAnswers";
 import Metric from "@components/shared/Metric";
 import ParseHTML from "@components/shared/ParseHTML";
 import Tag from "@components/shared/Tag";
+import Votes from "@components/shared/Votes";
 import { pages } from "@constants";
 import { formatNumber, getTimeStamp } from "@lib/utils";
 import Image from "next/image";
@@ -19,11 +21,12 @@ const Question = async ({ params, searchParams }) => {
     return;
   }
 
+  const author = question.author;
+
   let user;
   const { userId: clerkId } = auth();
   if (clerkId) user = await getUserById(clerkId);
 
-  const author = question.author;
   return (
     <>
       <div className="flex-start w-full flex-col">
@@ -43,7 +46,18 @@ const Question = async ({ params, searchParams }) => {
               {author.name}
             </p>
           </Link>
-          <div className="flex justify-end">VOTING</div>
+          <div className="flex justify-end">
+            <Votes
+              type="question"
+              questionId={question._id}
+              userId={user._id}
+              upvotes={question.upvotes.length}
+              hasUpvoted={question.upvotes.includes(user._id)}
+              downvotes={question.upvotes.length}
+              hasDownvoted={question.downvotes.includes(user._id)}
+              hasSaved={user?.saved.includes(question._id)}
+            />
+          </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {question.title}
@@ -82,6 +96,7 @@ const Question = async ({ params, searchParams }) => {
         ))}
       </div>
 
+      <AllAnswers question={question} />
       <Answer
         questionId={JSON.stringify(question._id)}
         authorId={JSON.stringify(question.author._id)}
