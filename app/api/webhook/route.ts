@@ -77,20 +77,10 @@ export async function POST(req: Request) {
         picture: image_url,
       };
 
-      if (eventType === "user.created") {
-        dataToSend = await createUser({
-          clerkId: id,
-          ...userData,
-        });
-      } else {
-        console.log("dans else");
-        console.log(userData);
-        dataToSend = await updateUser({
-          clerkId: id,
-          updateData: userData,
-          path: `/${pages.profile}/${id}`,
-        });
-      }
+      dataToSend = await createUser({
+        clerkId: id,
+        ...userData,
+      });
       break;
     }
     case "user.updated": {
@@ -110,21 +100,13 @@ export async function POST(req: Request) {
         username: username!,
         picture: image_url,
       };
-
-      if (eventType === "user.created") {
-        dataToSend = await createUser({
-          clerkId: id,
-          ...userData,
-        });
-      } else {
-        console.log("dans else");
-        console.log(userData);
-        dataToSend = await updateUser({
-          clerkId: id,
-          updateData: userData,
-          path: `/${pages.profile}/${id}`,
-        });
-      }
+      console.log("dans else");
+      console.log(userData);
+      dataToSend = await updateUser({
+        clerkId: id,
+        updateData: userData,
+        path: `/${pages.profile}/${id}`,
+      });
       break;
     }
 
