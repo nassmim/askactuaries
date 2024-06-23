@@ -7,7 +7,6 @@ import { NextResponse } from "next/server";
 import { pages } from "@constants";
 
 export async function POST(req: Request) {
-  console.log("dans webhook");
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
 
@@ -58,11 +57,9 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   let dataToSend;
-  console.log(eventType);
   switch (eventType) {
     case "user.created":
     case "user.updated": {
-      console.log("dans created or updated");
       const {
         id,
         email_addresses,
@@ -85,8 +82,6 @@ export async function POST(req: Request) {
           ...userData,
         });
       } else {
-        console.log("dans else");
-        console.log(userData);
         dataToSend = await updateUser({
           clerkId: id,
           updateData: userData,

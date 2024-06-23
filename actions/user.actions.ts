@@ -14,8 +14,7 @@ export const updateUser = async (params: IUpdateUserParams) => {
   });
 
   const { clerkId, updateData, path } = params;
-  console.log("dans update user");
-  console.log(updateData);
+
   await User.findOneAndUpdate({ clerkId }, updateData).catch((error) => {
     throw new Error(
       "Issue while trying to update a user: " +
