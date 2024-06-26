@@ -4,16 +4,18 @@ import { Schema, models, model, Document } from "mongoose";
 export interface IInteraction extends Document {
   user: Schema.Types.ObjectId;
   action: string;
-  questions: Schema.Types.ObjectId;
-  followers: Schema.Types.ObjectId[];
+  question: Schema.Types.ObjectId;
+  answer: Schema.Types.ObjectId;
+  tags: Schema.Types.ObjectId[];
   createdAt: Date;
 }
 
 const InteractionSchema = new Schema({
-  name: { type: String, required: true, unique: true },
-  description: { type: String },
-  questions: Array({ type: Schema.Types.ObjectId, ref: "Question" }),
-  followers: Array({ type: Schema.Types.ObjectId, ref: "User" }),
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  action: { type: String, required: true },
+  question: { type: Schema.Types.ObjectId, ref: "Question" },
+  answer: { type: Schema.Types.ObjectId, ref: "Answer" },
+  tags: Array({ type: Schema.Types.ObjectId, ref: "Tag" }),
   createdAt: { type: Date, default: Date.now },
 });
 

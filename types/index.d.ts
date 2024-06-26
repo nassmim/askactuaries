@@ -124,6 +124,11 @@ export interface QuestionType {
   createdAt: Date;
 }
 
+export interface IViewQuestionParams {
+  questionId: string;
+  userId: string | undefined;
+  path: string;
+}
 export interface SidebarLink {
   imgURL: string;
   route: RouteType;
