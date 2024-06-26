@@ -21,7 +21,7 @@ import { Badge } from "@components/ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@actions/question.actions";
 import { usePathname, useRouter } from "next/navigation";
-import { pages } from "@constants";
+import { pages, themes } from "@constants";
 import { useTheme } from "@context/ThemeProvider";
 
 type FormType = z.infer<typeof QuestionFormSchema>;
