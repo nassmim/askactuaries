@@ -1,4 +1,5 @@
 "use server";
+import { type FilterQuery } from "mongoose";
 import { IQuestion, Question, Tag, User } from "@database/index";
 import { connectToDB } from "@lib/mongoose";
 import {
@@ -39,13 +40,18 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
     throw new Error(error.message);
   });
 
+  let questions;
   try {
-    const questions = await Question.find({})
-      .populate({ path: "tags", model: Tag })
-      .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 });
+    const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
+    if (clerkId) questions = await getSavedQuestions(clerkId, searchQuery);
+    else {
+      questions = await Question.find({})
+        .populate({ path: "tags", model: Tag })
+        .populate({ path: "author", model: User })
+        .sort({ createdAt: -1 });
+    }
 
-    return questions;
+    return { questions };
   } catch (error) {
     throw new Error(
       "Error while trying to fetch the questions from DB." +
@@ -53,6 +59,36 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
     );
   }
 };
+
+async function getSavedQuestions(clerkId: string, searchQuery?: string) {
+  const query: FilterQuery<typeof Question> = searchQuery
+    ? { title: { $regex: new RegExp(searchQuery, "i") } }
+    : {};
+
+  let user;
+  try {
+    user = await User.findOne({ clerkId }).populate({
+      path: "saved",
+      match: query,
+      options: {
+        sort: { createdAt: -1 },
+      },
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
+    if (!user) throw new Error("User not found");
+  } catch (error) {
+    throw new Error(
+      "Error while trying to get the user and its saved questions" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  return user.saved;
+}
 
 export const createQuestion = async (params: ICreateQuestionParams) => {
   await connectToDB().catch((error: Error) => {

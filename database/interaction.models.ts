@@ -1,15 +1,15 @@
 "use server";
 import { Schema, models, model, Document } from "mongoose";
 
-export interface ITag extends Document {
-  name: string;
-  description: string;
-  questions: Schema.Types.ObjectId[];
+export interface IInteraction extends Document {
+  user: Schema.Types.ObjectId;
+  action: string;
+  questions: Schema.Types.ObjectId;
   followers: Schema.Types.ObjectId[];
   createdAt: Date;
 }
 
-const TagSchema = new Schema({
+const InteractionSchema = new Schema({
   name: { type: String, required: true, unique: true },
   description: { type: String },
   questions: Array({ type: Schema.Types.ObjectId, ref: "Question" }),
@@ -17,5 +17,6 @@ const TagSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Tag = models.Tag || model("Tag", TagSchema);
-export default Tag;
+const Interaction =
+  models.Interaction || model("Interaction", InteractionSchema);
+export default Interaction;

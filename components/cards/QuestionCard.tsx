@@ -39,8 +39,8 @@ const QuestionCard = ({ question }: { question: QuestionType }) => {
         <Metric
           image="/assets/icons/like.svg"
           alt="Upvotes"
-          value={formatNumber(question.upvotes)}
-          title={`${question.upvotes > 1 ? "Upvotes" : "Upvote"}`}
+          value={formatNumber(question.upvotes.length)}
+          title={`${question.upvotes.length > 1 ? "Upvotes" : "Upvote"}`}
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
