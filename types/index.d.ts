@@ -86,6 +86,7 @@ export interface IGetQuestionParams {
 }
 
 export interface IGetQuestionsParams {
+  clerkId?: string;
   page?: number;
   pageSize?: number;
   searchQuery?: string;
@@ -117,7 +118,7 @@ export interface QuestionType {
   title: string;
   tags: TagType[];
   author: AuthorType;
-  upvotes: number;
+  upvotes: string[];
   views: number;
   answers: Array<object>;
   createdAt: Date;
