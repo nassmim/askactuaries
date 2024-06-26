@@ -52,6 +52,30 @@ export interface ICreateAnswerParams {
   path: string;
 }
 
+export interface IQuestionVoteParams {
+  questionId: string;
+  userId: string;
+  hasUpVoted: boolean;
+  hasDownVoted: boolean;
+  action: string;
+  path: string;
+}
+
+export interface IToggleSaveQuestionParams {
+  userId: string;
+  questionId: string;
+  path: string;
+}
+
+export interface IAnswerVoteParams {
+  answerId: string;
+  userId: string;
+  hasUpVoted: boolean;
+  hasDownVoted: boolean;
+  action: string;
+  path: string;
+}
+
 export interface IGetUserQuestionsParams {
   questionId: string;
   userId: string | undefined;

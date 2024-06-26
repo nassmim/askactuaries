@@ -5,9 +5,11 @@ import {
   ICreateQuestionParams,
   IGetQuestionsParams,
   IGetQuestionParams,
+  IQuestionVoteParams,
 } from "@types";
 import { Schema } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { getUpdateQuery } from "./general.actions";
 
 export const getQuestion = async (params: IGetQuestionParams) => {
   await connectToDB().catch((error: Error) => {
@@ -95,6 +97,26 @@ export const createQuestion = async (params: ICreateQuestionParams) => {
   } catch (error) {
     throw new Error(
       "Error raised while trying to associate the tags documents to the question document in the DB" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  revalidatePath(path);
+};
+
+export const voteQuestion = async (params: IQuestionVoteParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  const { questionId, userId, hasUpVoted, hasDownVoted, action, path } = params;
+  const updateQuery = getUpdateQuery(userId, hasUpVoted, hasDownVoted, action);
+
+  try {
+    await Question.findByIdAndUpdate(questionId, updateQuery);
+  } catch (error) {
+    throw new Error(
+      "Error while trying to vote a question" +
         (error instanceof Error ? error.message : error),
     );
   }
