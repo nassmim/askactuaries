@@ -1,3 +1,4 @@
+"use server";
 import { Question } from "@database";
 import User from "@database/user.model";
 import { connectToDB } from "@lib/mongoose";
@@ -5,6 +6,7 @@ import {
   ICreateUserParams,
   IDeleteUserParams,
   IGetAllUsersParams,
+  IToggleSaveQuestionParams,
   IUpdateUserParams,
 } from "@types";
 import { revalidatePath } from "next/cache";
@@ -99,4 +101,43 @@ export const deleteUser = async (params: IDeleteUserParams) => {
   });
 
   return userToDelete;
+};
+
+export const toggleSaveQuestion = async (params: IToggleSaveQuestionParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  const { questionId, userId, path } = params;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+
+    if (!user) throw new Error("User not found");
+  } catch (error) {
+    throw new Error(
+      "Issue while trying to get the user account: " +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  const isQuestionSaved = user.saved.includes(questionId);
+  console.log(questionId);
+  try {
+    if (isQuestionSaved)
+      await User.findByIdAndUpdate(userId, { $pull: { saved: questionId } });
+    else {
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { saved: questionId },
+      });
+    }
+  } catch (error) {
+    throw new Error(
+      "Issue while trying to update the user's saved questions: " +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  revalidatePath(path);
 };

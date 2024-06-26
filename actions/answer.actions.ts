@@ -3,8 +3,13 @@
 import { Question } from "@database";
 import Answer from "@database/answer.model";
 import { connectToDB } from "@lib/mongoose";
-import { ICreateAnswerParams, IGetQuestionAnswersParams } from "@types";
+import {
+  IAnswerVoteParams,
+  ICreateAnswerParams,
+  IGetQuestionAnswersParams,
+} from "@types";
 import { revalidatePath } from "next/cache";
+import { getUpdateQuery } from "./general.actions";
 
 export const createAnswer = async (params: ICreateAnswerParams) => {
   await connectToDB().catch((error: Error) => {
@@ -48,4 +53,24 @@ export const getQuestionAnswers = async (params: IGetQuestionAnswersParams) => {
         (error instanceof Error ? error.message : error),
     );
   }
+};
+
+export const voteAnswer = async (params: IAnswerVoteParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  const { answerId, userId, hasUpVoted, hasDownVoted, action, path } = params;
+  const updateQuery = getUpdateQuery(userId, hasUpVoted, hasDownVoted, action);
+
+  try {
+    await Answer.findByIdAndUpdate(answerId, updateQuery);
+  } catch (error) {
+    throw new Error(
+      "Error while trying to vote a answer" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  revalidatePath(path);
 };

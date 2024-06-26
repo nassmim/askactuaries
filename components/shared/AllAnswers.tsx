@@ -8,13 +8,16 @@ import { pages } from "@constants";
 import Image from "next/image";
 import { getTimeStamp } from "@lib/utils";
 import ParseHTML from "./ParseHTML";
+import { Votes } from "./Votes";
 
 const AllAnswers = async ({
   question,
+  userId,
   page,
   filter,
 }: {
   question: QuestionType;
+  userId: string;
   page?: number;
   filter?: number;
 }) => {
@@ -62,7 +65,17 @@ const AllAnswers = async ({
                   </div>
                 </Link>
 
-                <div className="flex justify-end">VOTING</div>
+                <div className="flex justify-end">
+                  <Votes
+                    type="answer"
+                    itemId={JSON.stringify(answer._id)}
+                    userId={JSON.stringify(userId)}
+                    upvotes={answer.upvotes.length}
+                    hasUpVoted={answer.upvotes.includes(userId)}
+                    downvotes={answer.downvotes.length}
+                    hasDownVoted={answer.downvotes.includes(userId)}
+                  />
+                </div>
               </div>
             </div>
             <ParseHTML data={answer.content} />

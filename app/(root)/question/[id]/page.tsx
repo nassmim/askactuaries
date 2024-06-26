@@ -6,7 +6,7 @@ import AllAnswers from "@components/shared/AllAnswers";
 import Metric from "@components/shared/Metric";
 import ParseHTML from "@components/shared/ParseHTML";
 import Tag from "@components/shared/Tag";
-import Votes from "@components/shared/Votes";
+import { Votes } from "@components/shared/Votes";
 import { pages } from "@constants";
 import { formatNumber, getTimeStamp } from "@lib/utils";
 import Image from "next/image";
@@ -49,12 +49,12 @@ const Question = async ({ params, searchParams }) => {
           <div className="flex justify-end">
             <Votes
               type="question"
-              questionId={question._id}
-              userId={user._id}
+              itemId={JSON.stringify(question._id)}
+              userId={JSON.stringify(user._id)}
               upvotes={question.upvotes.length}
-              hasUpvoted={question.upvotes.includes(user._id)}
-              downvotes={question.upvotes.length}
-              hasDownvoted={question.downvotes.includes(user._id)}
+              hasUpVoted={question.upvotes.includes(user._id)}
+              downvotes={question.downvotes.length}
+              hasDownVoted={question.downvotes.includes(user._id)}
               hasSaved={user?.saved.includes(question._id)}
             />
           </div>
@@ -96,7 +96,7 @@ const Question = async ({ params, searchParams }) => {
         ))}
       </div>
 
-      <AllAnswers question={question} />
+      <AllAnswers question={question} userId={user._id} />
       <Answer
         questionId={JSON.stringify(question._id)}
         authorId={JSON.stringify(question.author._id)}
