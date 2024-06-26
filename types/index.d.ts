@@ -87,6 +87,7 @@ export interface IGetQuestionParams {
 
 export interface IGetQuestionsParams {
   clerkId?: string;
+  tagId?: string;
   page?: number;
   pageSize?: number;
   searchQuery?: string;

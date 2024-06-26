@@ -41,17 +41,29 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
   });
 
   let questions;
+  let tag;
   try {
-    const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
+    const {
+      clerkId,
+      tagId,
+      page = 1,
+      pageSize = 10,
+      filter,
+      searchQuery,
+    } = params;
     if (clerkId) questions = await getSavedQuestions(clerkId, searchQuery);
-    else {
+    else if (tagId) {
+      const result = await getQuestionsByTag(tagId, searchQuery);
+      tag = result.tag;
+      questions = result.questions;
+    } else {
       questions = await Question.find({})
         .populate({ path: "tags", model: Tag })
         .populate({ path: "author", model: User })
         .sort({ createdAt: -1 });
     }
 
-    return { questions };
+    return { tag, questions };
   } catch (error) {
     throw new Error(
       "Error while trying to fetch the questions from DB." +
@@ -59,36 +71,6 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
     );
   }
 };
-
-async function getSavedQuestions(clerkId: string, searchQuery?: string) {
-  const query: FilterQuery<typeof Question> = searchQuery
-    ? { title: { $regex: new RegExp(searchQuery, "i") } }
-    : {};
-
-  let user;
-  try {
-    user = await User.findOne({ clerkId }).populate({
-      path: "saved",
-      match: query,
-      options: {
-        sort: { createdAt: -1 },
-      },
-      populate: [
-        { path: "tags", model: Tag, select: "_id name" },
-        { path: "author", model: User, select: "_id clerkId name picture" },
-      ],
-    });
-
-    if (!user) throw new Error("User not found");
-  } catch (error) {
-    throw new Error(
-      "Error while trying to get the user and its saved questions" +
-        (error instanceof Error ? error.message : error),
-    );
-  }
-
-  return user.saved;
-}
 
 export const createQuestion = async (params: ICreateQuestionParams) => {
   await connectToDB().catch((error: Error) => {
@@ -114,7 +96,7 @@ export const createQuestion = async (params: ICreateQuestionParams) => {
     for (const tag of tags) {
       const tagFromDB = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
-        { $setOnInsert: { name: tag }, $push: { question: question._id } },
+        { $setOnInsert: { name: tag }, $push: { questions: question._id } },
         { upsert: true, new: true },
       );
 
@@ -159,3 +141,65 @@ export const voteQuestion = async (params: IQuestionVoteParams) => {
 
   revalidatePath(path);
 };
+
+async function getSavedQuestions(clerkId: string, searchQuery?: string) {
+  const query: FilterQuery<typeof Question> = searchQuery
+    ? { title: { $regex: new RegExp(searchQuery, "i") } }
+    : {};
+
+  let user;
+  try {
+    user = await User.findOne({ clerkId }).populate({
+      path: "saved",
+      match: query,
+      options: {
+        sort: { createdAt: -1 },
+      },
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
+    if (!user) throw new Error("User not found");
+  } catch (error) {
+    throw new Error(
+      "Error while trying to get the user and its saved questions" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  return user.saved;
+}
+
+async function getQuestionsByTag(tagId: string, searchQuery?: string) {
+  const filter: FilterQuery<typeof Tag> = { _id: tagId };
+  const query: FilterQuery<typeof Question> = searchQuery
+    ? { title: { $regex: new RegExp(searchQuery, "i") } }
+    : {};
+
+  let tag;
+  try {
+    tag = await Tag.findOne(filter).populate({
+      path: "questions",
+      match: query,
+      options: {
+        sort: { createdAt: -1 },
+      },
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
+    if (!tag) throw new Error("Tag not found");
+  } catch (error) {
+    throw new Error(
+      "Error while trying to get the questions related to a tag" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  const questions = tag.questions;
+  return { tag, questions };
+}
