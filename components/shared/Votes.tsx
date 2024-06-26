@@ -1,10 +1,12 @@
 "use client";
 import { voteAnswer } from "@actions/answer.actions";
+import { viewQuestion } from "@actions/interaction.actions";
 import { voteQuestion } from "@actions/question.actions";
 import { toggleSaveQuestion } from "@actions/user.actions";
 import { formatNumber } from "@lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface VotesProps {
   type: string;
@@ -65,6 +67,7 @@ export const Votes = ({
   hasDownVoted,
   hasSaved,
 }: VotesProps) => {
+  const router = useRouter();
   const path = usePathname();
 
   const handleSave = () => {
@@ -98,6 +101,14 @@ export const Votes = ({
       });
     }
   };
+
+  useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+      path,
+    });
+  }, [itemId, userId, path, router]);
 
   return (
     <div className="flex gap-5">
