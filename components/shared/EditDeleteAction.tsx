@@ -3,8 +3,7 @@ import { deleteAnswer } from "@actions/answer.actions";
 import { deleteQuestion } from "@actions/question.actions";
 import { pages } from "@constants";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 
 const EditDeleteAction = ({
   type,
@@ -16,13 +15,12 @@ const EditDeleteAction = ({
   const pathName = usePathname();
   const router = useRouter();
 
-  const handleEdit = () =>
-    router.push(`${pages.editQuestion}/${JSON.parse(itemId)}`);
+  const handleEdit = () => router.push(`${pages.editQuestion}/${itemId}`);
 
   const handleDelete = async () => {
     if (type === "question")
-      await deleteQuestion({ questionId: JSON.parse(itemId), path: pathName });
-    else await deleteAnswer({ answerId: JSON.parse(itemId), path: pathName });
+      await deleteQuestion({ questionId: itemId, path: pathName });
+    else await deleteAnswer({ answerId: itemId, path: pathName });
   };
 
   return (
