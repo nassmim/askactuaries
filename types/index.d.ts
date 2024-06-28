@@ -1,6 +1,6 @@
 import { BADGE_CRITERIA, RouteType } from "@/constants";
 import { IUser } from "@database";
-import { Schema } from "mongoose";
+import { Schema, SortOrder } from "mongoose";
 
 export interface IGetAllTagsParams {
   page?: number;
@@ -85,16 +85,6 @@ export interface IGetQuestionParams {
   questionId: string;
 }
 
-export interface IGetQuestionsParams {
-  userId?: string;
-  clerkId?: string;
-  tagId?: string;
-  page?: number;
-  pageSize?: number;
-  searchQuery?: string;
-  filter?: string;
-}
-
 export interface IGetUserStatsParams {
   userId: string;
   page?: number;
@@ -162,6 +152,22 @@ export interface PopulatedUserType extends UserType {
 export interface PopulatedQuestionType extends QuestionType {
   answers: AnswerType[];
   tags: TagType[];
+}
+
+export interface IGetQuestionsParams {
+  userId?: string;
+  clerkId?: string;
+  tagId?: string;
+  page?: number;
+  pageSize?: number;
+  searchQuery?: string;
+  filter?: string;
+  sort?:
+    | string
+    | {
+        [key: string]: SortOrder;
+      };
+  limit?: number;
 }
 
 export interface IDeleteQuestionParams {

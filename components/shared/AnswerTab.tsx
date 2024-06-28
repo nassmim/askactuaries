@@ -14,7 +14,6 @@ const AnswerTab = async ({ searchProps, userId, clerkId }: IAnswerTabProps) => {
   } catch (error) {
     return;
   }
-  console.log(result.answers);
   return result.answers.map((answer) => (
     <AnswerCard key={answer._id} answer={answer} clerkId={clerkId} />
   ));

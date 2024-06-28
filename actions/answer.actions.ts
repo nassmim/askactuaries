@@ -94,8 +94,6 @@ export const getUserAnswers = async (params: IGetUserStatsParams) => {
       .populate("question", "_id title upvotes downvotes")
       .populate("author", "_id clerkId name picture");
   } catch (error) {
-    console.log(answers);
-    // console.log(answers?[0].question.upvotes);
     throw new Error(
       "Error while trying to get the answers written by a user" +
         (error instanceof Error ? error.message : error),

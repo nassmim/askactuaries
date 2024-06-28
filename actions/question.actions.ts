@@ -56,6 +56,8 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
       pageSize = 10,
       filter,
       searchQuery,
+      sort = { createdAt: -1 },
+      limit = 0,
     } = params;
 
     if (clerkId) questions = await getSavedQuestions(clerkId, searchQuery);
@@ -71,7 +73,8 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
       questions = await Question.find({})
         .populate({ path: "tags", model: Tag })
         .populate({ path: "author", model: User })
-        .sort({ createdAt: -1 });
+        .sort(sort)
+        .limit(limit);
     }
 
     return { tag, totalQuestions, questions };
