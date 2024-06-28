@@ -1,11 +1,13 @@
 "use server";
 import { Question } from "@database";
+import Answer from "@database/answer.model";
 import User from "@database/user.model";
 import { connectToDB } from "@lib/mongoose";
 import {
   ICreateUserParams,
   IDeleteUserParams,
   IGetAllUsersParams,
+  IGetUserParams,
   IToggleSaveQuestionParams,
   IUpdateUserParams,
 } from "@types";
@@ -42,18 +44,38 @@ export const updateUser = async (params: IUpdateUserParams) => {
   revalidatePath(path);
 };
 
-export const getUserById = async (userId: string) => {
+export const getUser = async (params: IGetUserParams) => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });
 
-  const user = await User.findOne({ clerkId: userId }).catch((error) => {
+  const user = await User.findOne({ clerkId: params.userId }).catch((error) => {
     throw new Error(
       "Issue while trying to fetch user: " +
         (error instanceof Error ? error.message : error),
     );
   });
   return user;
+};
+
+export const getUserProfile = async (params: IGetUserParams) => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  const user = await User.findOne({ clerkId: params.userId }).catch((error) => {
+    throw new Error(
+      "Issue while trying to fetch user: " +
+        (error instanceof Error ? error.message : error),
+    );
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const totalQuestions = await Question.countDocuments({ author: user._id });
+  const totalAnswers = await Answer.countDocuments({ author: user._id });
+
+  return { user, totalQuestions, totalAnswers };
 };
 
 export const getAllUsers = async (params: IGetAllUsersParams) => {
@@ -80,7 +102,7 @@ export const deleteUser = async (params: IDeleteUserParams) => {
     throw new Error(error.message);
   });
 
-  const userToDelete = await getUserById(params.clerkId).catch(
+  const userToDelete = await getUser({ userId: params.clerkId }).catch(
     (error: Error) => {
       throw new Error(error.message);
     },

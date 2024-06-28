@@ -1,4 +1,4 @@
-import { getUserById } from "@actions/user.actions";
+import { getUser } from "@actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import Question from "@components/forms/Question";
 import { pages } from "@constants";
@@ -7,15 +7,15 @@ import { redirect } from "next/navigation";
 const AskQuestion = async () => {
   const { userId } = auth();
 
-  if (!userId) redirect(`/${pages.signIn}`);
+  if (!userId) redirect(`${pages.signIn}`);
   let user;
   try {
-    user = await getUserById(userId);
+    user = await getUser({ userId });
   } catch (error) {
     return;
   }
 
-  if (!user) redirect(`/${pages.signIn}`);
+  if (!user) redirect(`${pages.signIn}`);
 
   return (
     <div>

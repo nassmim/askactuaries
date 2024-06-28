@@ -85,7 +85,7 @@ export async function POST(req: Request) {
         dataToSend = await updateUser({
           clerkId: id,
           updateData: userData,
-          path: `/${pages.profile}/${id}`,
+          path: `${pages.profile}/${id}`,
         });
       }
       break;

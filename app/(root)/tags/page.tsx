@@ -34,7 +34,7 @@ const Tags = async () => {
           tags.map((tag) => (
             <Link
               key={tag._id}
-              href={`/${pages.tags}/${tag._id}`}
+              href={`${pages.tags}/${tag._id}`}
               className="shadow-light100_darknone"
             >
               <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 sm:w-[260px]">
@@ -56,7 +56,7 @@ const Tags = async () => {
           <NoResult
             title="No tags found"
             description="It looks like there are no tags yet"
-            link={`/${pages.askQuestion}`}
+            link={`${pages.askQuestion}`}
             linkLabel="Ask a question"
           />
         )}

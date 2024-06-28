@@ -52,3 +52,10 @@ export const formatNumber = (numberValue: number): string => {
   else if (numberValue >= 1000) return (numberValue / 1000).toFixed(1) + "k";
   else return numberValue.toString();
 };
+
+export const formatDateAsMonthYear = (date: Date) => {
+  const month = date.toLocaleString("default", { month: "long" });
+  const year = date.getFullYear();
+
+  return `${month} ${year}`;
+};

@@ -11,11 +11,11 @@ export interface IAnswer extends Document {
 }
 
 const AnswerSchema = new Schema({
-  question: Array({
+  question: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: "Question",
-  }),
+  },
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   content: { type: String, required: true },
   upvotes: Array({ type: Schema.Types.ObjectId, ref: "User" }),
