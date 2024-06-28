@@ -51,3 +51,17 @@ export const getUserTopInteractedTags = async (
     { _id: "3", name: "Tag3" },
   ];
 };
+
+export const getPopularTags = async () => {
+  await connectToDB().catch((error: Error) => {
+    throw new Error(error.message);
+  });
+
+  const popularTags = Tag.aggregate([
+    { $project: { name: 1, totalQuestions: { $size: "$questions" } } },
+    { $sort: { totalQuestions: -1 } },
+    { $limit: 5 },
+  ]);
+
+  return popularTags;
+};
