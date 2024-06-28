@@ -8,6 +8,7 @@ import {
   IGetQuestionParams,
   IQuestionVoteParams,
   IDeleteQuestionParams,
+  IEditQuestionParams,
 } from "@types";
 import { Schema } from "mongoose";
 import { revalidatePath } from "next/cache";
@@ -128,6 +129,25 @@ export const createQuestion = async (params: ICreateQuestionParams) => {
         (error instanceof Error ? error.message : error),
     );
   }
+
+  revalidatePath(path);
+};
+
+export const editQuestion = async (params: IEditQuestionParams) => {
+  const { questionId, title, content, path } = params;
+
+  const question = await Question.findById(questionId).catch((error) => {
+    throw new Error(
+      "Error raised while trying to update the question" +
+        (error instanceof Error ? error.message : error),
+    );
+  });
+
+  if (!question) throw new Error("Question not found");
+
+  question.title = title;
+  question.content = content;
+  await question.save();
 
   revalidatePath(path);
 };

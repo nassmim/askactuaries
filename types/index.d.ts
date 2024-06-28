@@ -138,6 +138,7 @@ interface UserType {
 interface QuestionType {
   _id: string;
   title: string;
+  content: string;
   author: AuthorType;
   upvotes: UserType[];
   views: number;
@@ -191,6 +192,13 @@ export interface SidebarLink {
 export interface FilterType {
   name: string;
   value: string;
+}
+
+export interface IEditQuestionParams {
+  questionId: string;
+  title: string;
+  content: string;
+  path: string;
 }
 
 export interface Job {
