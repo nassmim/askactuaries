@@ -45,7 +45,7 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
             </p>
 
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
-              {user.portfolio && (
+              {user.portfolioURL && (
                 <ProfileLink
                   imageURL="/assets/icons/link.svg"
                   href={user.portfolioURL}
@@ -61,7 +61,7 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
               )}
 
               <ProfileLink
-                imageURL="/assets/icons/location.svg"
+                imageURL="/assets/icons/calendar.svg"
                 title={formatDateAsMonthYear(user.joinedAt)}
               />
             </div>
