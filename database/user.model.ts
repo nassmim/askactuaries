@@ -9,6 +9,7 @@ export interface IUser extends Document {
   password: string;
   bio?: string;
   picture: string;
+  location: string;
   portfolioURL?: string;
   reputation: number;
   saved?: Schema.Types.ObjectId[];
@@ -23,6 +24,7 @@ const UserSchema = new Schema({
   password: { type: String },
   bio: { type: String, default: "" },
   picture: { type: String, required: true },
+  location: { type: String },
   portfolioURL: { type: String, default: "" },
   reputation: { type: Number, default: 0 },
   saved: Array({ type: Schema.Types.ObjectId, ref: "Question" }),

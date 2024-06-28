@@ -30,3 +30,11 @@ export const answerFormFields = {
 export const AnswerFormSchema = z.object({
   answer: z.string(),
 });
+
+export const ProfileFormSchema = z.object({
+  name: z.string().min(2),
+  username: z.string().min(2).max(50),
+  bio: z.string().min(10).max(150),
+  location: z.string().min(2),
+  portfolioURL: z.string().url(),
+});
