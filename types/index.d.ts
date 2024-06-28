@@ -86,12 +86,19 @@ export interface IGetQuestionParams {
 }
 
 export interface IGetQuestionsParams {
+  userId?: string;
   clerkId?: string;
   tagId?: string;
   page?: number;
   pageSize?: number;
   searchQuery?: string;
   filter?: string;
+}
+
+export interface IGetUserStatsParams {
+  userId: string;
+  page?: number;
+  pageSize?: number;
 }
 
 export interface ICreateQuestionParams {
@@ -110,19 +117,64 @@ export interface TagType {
 
 export interface AuthorType {
   _id: string;
+  clerkId?: string;
   name: string;
   picture: string;
 }
 
-export interface QuestionType {
+interface UserType {
+  clerkId: string;
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  bio?: string;
+  picture: string;
+  portfolioURL?: string;
+  reputation: number;
+  joinedAt: Date;
+}
+
+interface QuestionType {
   _id: string;
   title: string;
-  tags: TagType[];
   author: AuthorType;
-  upvotes: string[];
+  upvotes: UserType[];
   views: number;
-  answers: Array<object>;
   createdAt: Date;
+}
+
+interface AnswerType {
+  _id: string;
+  content: string;
+  question: QuestionType;
+  author: AuthorType;
+  upvotes: UserType[];
+  downvotes: UserType[];
+  createdAt: Date;
+}
+
+export interface PopulatedUserType extends UserType {
+  saved?: QuestionType[];
+}
+
+export interface PopulatedQuestionType extends QuestionType {
+  answers: AnswerType[];
+  tags: TagType[];
+}
+
+export interface IDeleteQuestionParams {
+  questionId: string;
+  path: string;
+}
+
+export interface IDeleteAnswerParams {
+  answerId: string;
+  path: string;
+}
+
+export interface PopulatedAnswerType extends AnswerType {
+  content: string;
 }
 
 export interface IViewQuestionParams {
@@ -167,6 +219,10 @@ export interface ParamsProps {
 
 export interface SearchParamsProps {
   searchParams: { [key: string]: string | undefined };
+}
+
+export interface IGetUserParams {
+  userId: string;
 }
 
 export interface URLProps {

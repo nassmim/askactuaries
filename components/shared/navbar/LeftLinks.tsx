@@ -1,4 +1,7 @@
+"use client";
+import { useAuth } from "@clerk/nextjs";
 import { SheetClose } from "@components/ui/sheet";
+import { RouteType, pages } from "@constants";
 import { sidebarLinks } from "@constants/sidebar";
 import { SidebarLink } from "@types";
 import Image from "next/image";
@@ -18,7 +21,7 @@ const NavLink = ({
   return (
     <Link
       key={link.route}
-      href={`/${link.route}`}
+      href={`${link.route}`}
       className={`${isActive ? "primary-gradient rounded-lg text-light-900" : "text-dark300_light900"} flex items-center justify-start gap-4 bg-transparent p-4`}
     >
       <Image
@@ -45,6 +48,7 @@ const LeftLinks = ({
   isCollapsible?: boolean;
 }) => {
   const pathName = usePathname();
+  const { userId } = useAuth();
 
   return (
     <>
@@ -53,6 +57,11 @@ const LeftLinks = ({
           pathName === link.route ||
           (link.route.length > 1 && pathName.includes(link.route));
 
+        if (link.route === pages.profile) {
+          if (userId) {
+            link.route = `${link.route}/${userId}` as RouteType;
+          } else return null;
+        }
         return sheetClose ? (
           <SheetClose asChild key={link.route}>
             <NavLink

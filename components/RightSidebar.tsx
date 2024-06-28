@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Tag from "./shared/Tag";
-import { QuestionType, TagType } from "@types";
+import { PopulatedQuestionType, TagType } from "@types";
+import { pages } from "@constants";
 
 const popularTags: TagType[] = [
   { _id: "1", name: "javascript", totalQuestions: 5 },
@@ -12,7 +13,7 @@ const popularTags: TagType[] = [
   { _id: "7", name: "redux", totalQuestions: 5 },
 ];
 
-const topQuestions: Pick<QuestionType, "_id" | "title">[] = [
+const topQuestions: Pick<PopulatedQuestionType, "_id" | "title">[] = [
   {
     _id: "1",
     title: "How to use express as a custom server in NEXTJS",
@@ -43,7 +44,7 @@ const RightSidebar = () => {
           {topQuestions.map((question) => (
             <Link
               key={question._id}
-              href={`/questions/${question._id}`}
+              href={`/${pages.question}/${question._id}`}
               className="flex cursor-pointer justify-between gap-7"
             >
               <p className="body-medium text-dark500_light700">

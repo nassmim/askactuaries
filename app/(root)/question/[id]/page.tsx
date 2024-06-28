@@ -1,5 +1,5 @@
 import { getQuestion } from "@actions/question.actions";
-import { getUserById } from "@actions/user.actions";
+import { getUser } from "@actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import Answer from "@components/forms/Answer";
 import AllAnswers from "@components/shared/AllAnswers";
@@ -25,14 +25,14 @@ const Question = async ({ params, searchParams }) => {
 
   let user;
   const { userId: clerkId } = auth();
-  if (clerkId) user = await getUserById(clerkId);
+  if (clerkId) user = await getUser({ userId: clerkId });
 
   return (
     <>
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
           <Link
-            href={`/${pages.profile}/${author.clerkId}`}
+            href={`${pages.profile}/${author.clerkId}`}
             className="flex items-center justify-start gap-1"
           >
             <Image

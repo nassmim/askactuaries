@@ -37,7 +37,7 @@ const Community = async () => {
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
             <p>No users yet</p>
             <Link
-              href={`/${pages.signUp}`}
+              href={`${pages.signUp}`}
               className="mt-2 font-bold text-accent-blue"
             >
               Join to be the first!
