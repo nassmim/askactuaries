@@ -11,7 +11,9 @@ import {
   IToggleSaveQuestionParams,
   IUpdateUserParams,
 } from "@types";
+import { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { FilterEnum } from "zod";
 
 export const createUser = async (params: ICreateUserParams) => {
   await connectToDB().catch((error: Error) => {
@@ -83,9 +85,18 @@ export const getAllUsers = async (params: IGetAllUsersParams) => {
     throw new Error(error.message);
   });
 
-  // const { page=1, pageSize=1, filter, searchQuery } = params
+  const { page = 1, pageSize = 1, filter, searchQuery } = params;
 
-  const users = User.find({})
+  const query: FilterQuery<typeof User> = {};
+
+  if (searchQuery) {
+    query.$or = [
+      { name: { $regex: new RegExp(searchQuery, "i") } },
+      { username: { $regex: new RegExp(searchQuery, "i") } },
+    ];
+  }
+
+  const users = await User.find(query)
     .sort({ createdAt: -1 })
     .catch((error) => {
       throw new Error(

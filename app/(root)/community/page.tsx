@@ -5,11 +5,14 @@ import { getAllUsers } from "@actions/user.actions";
 import { pages } from "@constants";
 import Link from "next/link";
 import UserCard from "@components/cards/UserCard";
+import { SearchParamsProps } from "@types";
 
-const Community = async () => {
+const Community = async ({ searchParams }: SearchParamsProps) => {
   let result;
   try {
-    result = await getAllUsers({});
+    result = await getAllUsers({
+      searchQuery: searchParams.q,
+    });
   } catch (error) {
     return;
   }
@@ -18,10 +21,11 @@ const Community = async () => {
 
   return (
     <>
-      <h1 className="h2-bold text-dark100_light900">All Questions</h1>
+      <h1 className="h2-bold text-dark100_light900">All Users</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchBar
+          route={pages.community}
           iconPosition="left"
           image="/assets/icons/search.svg"
           placeholder="Search for amazing minds"

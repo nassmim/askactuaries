@@ -99,7 +99,7 @@ export interface ICreateQuestionParams {
   path: string;
 }
 
-export interface TagType {
+interface TagType {
   _id: string;
   name: string;
   totalQuestions?: number;
@@ -152,6 +152,11 @@ export interface PopulatedUserType extends UserType {
 export interface PopulatedQuestionType extends QuestionType {
   answers: AnswerType[];
   tags: TagType[];
+}
+
+export interface PopulatedTagType extends TagType {
+  questions: QuestionType[];
+  followers: UserType[];
 }
 
 export interface IGetQuestionsParams {

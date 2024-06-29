@@ -1,5 +1,5 @@
 "use server";
-import { type FilterQuery } from "mongoose";
+import { SortOrder, type FilterQuery } from "mongoose";
 import { IQuestion, Question, Tag, User } from "@database/index";
 import { connectToDB } from "@lib/mongoose";
 import {
@@ -55,7 +55,7 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
       page = 1,
       pageSize = 10,
       filter,
-      searchQuery,
+      searchQuery = "",
       sort = { createdAt: -1 },
       limit = 0,
     } = params;
@@ -69,13 +69,7 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
       const result = await getUserQuestions(userId, page, pageSize);
       totalQuestions = result.totalQuestions;
       questions = result.questions;
-    } else {
-      questions = await Question.find({})
-        .populate({ path: "tags", model: Tag })
-        .populate({ path: "author", model: User })
-        .sort(sort)
-        .limit(limit);
-    }
+    } else questions = await getAllQuestions(searchQuery, sort, limit);
 
     return { tag, totalQuestions, questions };
   } catch (error) {
@@ -287,4 +281,31 @@ async function getUserQuestions(
   }
 
   return { totalQuestions, questions };
+}
+
+async function getAllQuestions(
+  searchQuery: string,
+  sort:
+    | string
+    | {
+        [key: string]: SortOrder;
+      },
+  limit: number,
+) {
+  const query: FilterQuery<typeof Question> = {};
+
+  if (searchQuery) {
+    query.$or = [
+      { title: { $regex: new RegExp(searchQuery, "i") } },
+      { content: { $regex: new RegExp(searchQuery, "i") } },
+    ];
+  }
+  console.log(query);
+  const questions = await Question.find(query)
+    .populate({ path: "tags", model: Tag })
+    .populate({ path: "author", model: User })
+    .sort(sort)
+    .limit(limit);
+
+  return questions;
 }

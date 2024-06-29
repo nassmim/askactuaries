@@ -5,19 +5,24 @@ import { connectToDB } from "@lib/mongoose";
 import {
   IGetAllTagsParams,
   IGetUserTopInteractedTagsParams,
-  TagType,
+  PopulatedTagType,
 } from "@types";
+import { FilterQuery } from "mongoose";
 
 export const getAllTags = async (
   params: IGetAllTagsParams,
-): Promise<{ tags: TagType[] }> => {
+): Promise<{ tags: PopulatedTagType[] }> => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });
 
-  // const { page=1, pageSize=1, filter, searchQuery } = params
+  const { page = 1, pageSize = 1, filter, searchQuery } = params;
 
-  const tags = await Tag.find({}).catch((error) => {
+  const query: FilterQuery<typeof Tag> = {};
+
+  if (searchQuery)
+    query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
+  const tags = await Tag.find(query).catch((error) => {
     throw new Error(
       "Issue while trying to fetch the tags: " +
         (error instanceof Error ? error.message : error),
@@ -34,6 +39,7 @@ export const getUserTopInteractedTags = async (
   });
 
   let user;
+
   try {
     user = await User.findById(params.userId);
   } catch (error) {
