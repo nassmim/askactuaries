@@ -12,7 +12,7 @@ const QuestionCard = ({
   clerkId,
 }: {
   question: PopulatedQuestionType;
-  clerkId: string;
+  clerkId?: string;
 }) => {
   const showActionButton = clerkId && clerkId === question.author.clerkId;
   return (

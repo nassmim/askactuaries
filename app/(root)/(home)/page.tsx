@@ -7,12 +7,15 @@ import LocalSearchBar from "@components/shared/search/LocalSearchBar";
 import { Button } from "@components/ui/button";
 import { pages } from "@constants";
 import { HomePageFilters } from "@constants/filters";
+import { SearchParamsProps } from "@types";
 import Link from "next/link";
 
-const Home = async () => {
+const Home = async ({ searchParams }: SearchParamsProps) => {
   let result;
   try {
-    result = await getQuestions({});
+    result = await getQuestions({
+      searchQuery: searchParams.q,
+    });
   } catch (error) {
     return;
   }
@@ -36,6 +39,7 @@ const Home = async () => {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchBar
+          route={pages.home}
           iconPosition="left"
           image="/assets/icons/search.svg"
           placeholder="Search for questions"

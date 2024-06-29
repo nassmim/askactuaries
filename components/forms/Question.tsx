@@ -24,7 +24,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { pages, themes } from "@constants";
 import { useTheme } from "@context/ThemeProvider";
 import { parse } from "path";
-import { QuestionType } from "@types";
+import {
+  Populated,
+  PopulatedQuestionType,
+  PopulatedQuestionTypeQuestionType,
+} from "@types";
 
 type FormType = z.infer<typeof QuestionFormSchema>;
 
@@ -43,17 +47,22 @@ const Question = ({
   const router = useRouter();
   const pathName = usePathname();
 
-  const parsedQuestionDetails = JSON.parse(
-    questionDetails || "",
-  ) as QuestionType;
+  let parsedQuestionDetails: PopulatedQuestionType | undefined;
+  let tagsNames: string[] | undefined;
 
-  const tagsNames = parsedQuestionDetails.tags.map((tag) => tag.name);
+  if (questionDetails) {
+    parsedQuestionDetails = JSON.parse(
+      questionDetails,
+    ) as PopulatedQuestionType;
+    tagsNames = parsedQuestionDetails?.tags.map((tag) => tag.name);
+  }
+
   const form = useForm<FormType>({
     resolver: zodResolver(QuestionFormSchema),
     defaultValues: {
-      title: parsedQuestionDetails.title,
+      title: parsedQuestionDetails?.title,
       explanation: "",
-      tags: tagsNames,
+      tags: tagsNames || [],
     },
   });
 
@@ -64,7 +73,7 @@ const Question = ({
       if (type === "edit") {
         try {
           await editQuestion({
-            questionId: parsedQuestionDetails._id,
+            questionId: parsedQuestionDetails!._id,
             title: values.title,
             content: values.explanation,
             path: pathName,
@@ -73,7 +82,7 @@ const Question = ({
           return;
         }
 
-        router.push(`${pages.question}/${parsedQuestionDetails._id}`);
+        router.push(`${pages.question}/${parsedQuestionDetails!._id}`);
       } else {
         try {
           await createQuestion({
@@ -169,7 +178,7 @@ const Question = ({
                     // @ts-ignore
                     editorRef.current = editor;
                   }}
-                  initialValue={parsedQuestionDetails.content}
+                  initialValue={parsedQuestionDetails?.content}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
