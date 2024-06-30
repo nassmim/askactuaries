@@ -16,6 +16,8 @@ import { getUpdateQuery } from "./general.actions";
 import Answer from "@database/answer.model";
 import Interaction from "@database/interaction.models";
 
+type QuestionFilterType = FilterQuery<typeof Question>;
+
 export const getQuestion = async (params: IGetQuestionParams) => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
@@ -44,34 +46,88 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
     throw new Error(error.message);
   });
 
-  let questions;
-  let tag;
-  let totalQuestions;
+  let result;
+  const {
+    clerkId,
+    userId,
+    tagId,
+    page = 1,
+    filter = "",
+    searchQuery = "",
+    sort = {},
+    limit = 0,
+  } = params;
+
+  const numberToSkip = (page - 1) * limit;
+
   try {
-    const {
-      clerkId,
-      userId,
-      tagId,
-      page = 1,
-      pageSize = 10,
-      filter,
-      searchQuery = "",
-      sort = { createdAt: -1 },
-      limit = 0,
-    } = params;
+    if (userId) result = await getUserQuestions(userId, numberToSkip, limit);
+    else {
+      const query: QuestionFilterType = {};
 
-    if (clerkId) questions = await getSavedQuestions(clerkId, searchQuery);
-    else if (tagId) {
-      const result = await getQuestionsByTag(tagId, searchQuery);
-      tag = result.tag;
-      questions = result.questions;
-    } else if (userId) {
-      const result = await getUserQuestions(userId, page, pageSize);
-      totalQuestions = result.totalQuestions;
-      questions = result.questions;
-    } else questions = await getAllQuestions(searchQuery, sort, limit);
+      let sortOptions = {};
+      switch (filter) {
+        case "newest":
+          sortOptions = { createdAt: -1 };
+          break;
+        case "recommended":
+          sortOptions = { createdAt: -1 };
+          break;
+        case "frequent":
+        case "most_viewed":
+          sortOptions = { views: -1 };
+          break;
+        case "unanswered":
+          query.answers = { $size: 0 };
+          break;
+        case "most_recent":
+          sortOptions = { createdAt: -1 };
+          break;
+        case "oldest":
+          sortOptions = { createdAt: 1 };
+          break;
+        case "most_voted":
+          sortOptions = { upvotes: -1 };
+          break;
+        case "most_answered":
+          sortOptions = { answers: -1 };
+          break;
+      }
 
-    return { tag, totalQuestions, questions };
+      sortOptions = {
+        ...sort,
+        ...sortOptions,
+      };
+
+      if (clerkId)
+        result = await getSavedQuestions(
+          clerkId,
+          query,
+          sortOptions,
+          searchQuery,
+          numberToSkip,
+          limit,
+        );
+      else if (tagId)
+        result = await getQuestionsByTag(
+          tagId,
+          query,
+          searchQuery,
+          numberToSkip,
+          limit,
+        );
+      else
+        result = await getAllQuestions(
+          searchQuery,
+          query,
+          sortOptions,
+          numberToSkip,
+          limit,
+        );
+    }
+
+    const { tag, totalQuestions, questions, isNext } = result;
+    return { tag, totalQuestions, questions, isNext };
   } catch (error) {
     throw new Error(
       "Error while trying to fetch the questions from DB." +
@@ -198,10 +254,17 @@ export const deleteQuestion = async (params: IDeleteQuestionParams) => {
   revalidatePath(path);
 };
 
-async function getSavedQuestions(clerkId: string, searchQuery?: string) {
-  const query: FilterQuery<typeof Question> = searchQuery
-    ? { title: { $regex: new RegExp(searchQuery, "i") } }
-    : {};
+async function getSavedQuestions(
+  clerkId: string,
+  query: QuestionFilterType,
+  sortOptions: {
+    [key: string]: SortOrder;
+  },
+  searchQuery: string,
+  numberToSkip: number,
+  limit: number,
+) {
+  if (searchQuery) query.title = { $regex: new RegExp(searchQuery, "i") };
 
   let user;
   try {
@@ -209,7 +272,9 @@ async function getSavedQuestions(clerkId: string, searchQuery?: string) {
       path: "saved",
       match: query,
       options: {
-        sort: { createdAt: -1 },
+        sort: sortOptions,
+        skip: numberToSkip,
+        limit: limit + 1,
       },
       populate: [
         { path: "tags", model: Tag, select: "_id name" },
@@ -225,14 +290,20 @@ async function getSavedQuestions(clerkId: string, searchQuery?: string) {
     );
   }
 
-  return user.saved;
+  const isNext = user.saved.length > limit;
+
+  return { isNext, questions: user.saved };
 }
 
-async function getQuestionsByTag(tagId: string, searchQuery?: string) {
+async function getQuestionsByTag(
+  tagId: string,
+  query: QuestionFilterType,
+  searchQuery: string,
+  numberToSkip: number,
+  limit: number,
+) {
   const filter: FilterQuery<typeof Tag> = { _id: tagId };
-  const query: FilterQuery<typeof Question> = searchQuery
-    ? { title: { $regex: new RegExp(searchQuery, "i") } }
-    : {};
+  if (searchQuery) query.title = { $regex: new RegExp(searchQuery, "i") };
 
   let tag;
   try {
@@ -241,6 +312,8 @@ async function getQuestionsByTag(tagId: string, searchQuery?: string) {
       match: query,
       options: {
         sort: { createdAt: -1 },
+        skip: numberToSkip,
+        limit: limit + 1,
       },
       populate: [
         { path: "tags", model: Tag, select: "_id name" },
@@ -257,19 +330,24 @@ async function getQuestionsByTag(tagId: string, searchQuery?: string) {
   }
 
   const questions = tag.questions;
-  return { tag, questions };
+  const isNext = questions.length > limit;
+
+  return { tag, questions, isNext };
 }
 
 async function getUserQuestions(
   userId: string,
-  page: number,
-  pageSize: number,
+  numberToSkip: number,
+  limit: number,
 ) {
   let totalQuestions, questions;
   try {
     totalQuestions = await Question.countDocuments({ author: userId });
-
+    console.log(numberToSkip);
+    console.log(limit);
     questions = await Question.find({ author: userId })
+      .skip(numberToSkip)
+      .limit(limit)
       .sort({ views: -1, upvotes: -1 })
       .populate("tags", "_id name")
       .populate("author", "_id clerkId name picture");
@@ -280,32 +358,36 @@ async function getUserQuestions(
     );
   }
 
-  return { totalQuestions, questions };
+  const isNext = totalQuestions > numberToSkip + questions.length;
+
+  return { totalQuestions, questions, isNext };
 }
 
 async function getAllQuestions(
   searchQuery: string,
-  sort:
-    | string
-    | {
-        [key: string]: SortOrder;
-      },
+  query: QuestionFilterType,
+  sortOptions: {
+    [key: string]: SortOrder;
+  },
+  numberToSkip: number,
   limit: number,
 ) {
-  const query: FilterQuery<typeof Question> = {};
-
   if (searchQuery) {
     query.$or = [
       { title: { $regex: new RegExp(searchQuery, "i") } },
       { content: { $regex: new RegExp(searchQuery, "i") } },
     ];
   }
-  console.log(query);
+
+  const totalQuestions = await Question.countDocuments(query);
   const questions = await Question.find(query)
     .populate({ path: "tags", model: Tag })
     .populate({ path: "author", model: User })
-    .sort(sort)
-    .limit(limit);
+    .skip(numberToSkip)
+    .limit(limit)
+    .sort(sortOptions);
 
-  return questions;
+  const isNext = totalQuestions > numberToSkip + questions.length;
+
+  return { isNext, questions };
 }

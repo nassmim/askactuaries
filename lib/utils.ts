@@ -44,7 +44,7 @@ export const getTimeStamp = (createdAt: Date): string => {
     nameToDisplay = "year";
   }
 
-  return `${adjustedTimeDifference} ${adjustedTimeDifference > 1 && nameToDisplay + "s"}`;
+  return `${adjustedTimeDifference} ${nameToDisplay} ${adjustedTimeDifference > 1 ? "s" : ""}`;
 };
 
 export const formatNumber = (numberValue: number): string => {

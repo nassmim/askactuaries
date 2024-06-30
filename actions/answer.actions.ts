@@ -44,18 +44,46 @@ export const getQuestionAnswers = async (params: IGetQuestionAnswersParams) => {
     throw new Error(error.message);
   });
 
-  try {
-    const answers = await Answer.find({ question: params.questionId })
-      .populate("author", "_id clerkId name picture")
-      .sort({ createdAt: -1 });
+  const { questionId, filter, page = 1, limit = 5 } = params;
 
-    return { answers };
+  let sortOptions = {};
+  switch (filter) {
+    case "highestUpvotes":
+      sortOptions = { upvotes: -1 };
+      break;
+    case "lowestUpvotes":
+      sortOptions = { upvotes: 1 };
+      break;
+    case "recent":
+      sortOptions = { createdAt: -1 };
+      break;
+    case "old":
+      sortOptions = { createdAt: 1 };
+      break;
+  }
+
+  const numberToSkip = (page - 1) * limit;
+
+  let answers;
+  let totalAnswers;
+  try {
+    answers = await Answer.find({ question: questionId })
+      .populate("author", "_id clerkId name picture")
+      .skip(numberToSkip)
+      .limit(limit)
+      .sort(sortOptions);
+
+    totalAnswers = await Answer.countDocuments({ question: questionId });
   } catch (error) {
     throw new Error(
       "Error while trying to fetch the answers for this question." +
         (error instanceof Error ? error.message : error),
     );
   }
+
+  const isNext = totalAnswers > numberToSkip + answers.length;
+
+  return { answers, isNext };
 };
 
 export const voteAnswer = async (params: IAnswerVoteParams) => {
@@ -83,13 +111,17 @@ export const getUserAnswers = async (params: IGetUserStatsParams) => {
     throw new Error(error.message);
   });
 
-  const { userId, page = 1, pageSize = 10 } = params;
+  const { userId, page = 1, limit = 10 } = params;
 
   let totalAnswers, answers;
+  const numberToSkip = (page - 1) * limit;
+
   try {
     totalAnswers = await Answer.countDocuments({ author: userId });
 
     answers = await Answer.find({ author: userId })
+      .skip(numberToSkip)
+      .limit(limit)
       .sort({ upvotes: -1 })
       .populate("question", "_id title upvotes downvotes")
       .populate("author", "_id clerkId name picture");
@@ -100,7 +132,8 @@ export const getUserAnswers = async (params: IGetUserStatsParams) => {
     );
   }
 
-  return { totalAnswers, answers };
+  const isNext = totalAnswers > numberToSkip + answers.length;
+  return { totalAnswers, answers, isNext };
 };
 
 export const deleteAnswer = async (params: IDeleteAnswerParams) => {

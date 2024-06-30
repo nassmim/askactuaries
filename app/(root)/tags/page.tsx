@@ -6,17 +6,22 @@ import { pages } from "@constants";
 import NoResult from "@components/shared/NoResult";
 import Link from "next/link";
 import { SearchParamsProps } from "@types";
+import Pagination from "@components/shared/Pagination";
 
 const Tags = async ({ searchParams }: SearchParamsProps) => {
   let result;
   try {
     result = await getAllTags({
       searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams?.page ? +searchParams.page : 1,
+      limit: 5,
     });
   } catch (error) {
     return;
   }
-  const tags = result.tags;
+
+  const { tags, isNext } = result;
 
   return (
     <>
@@ -41,7 +46,7 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
               href={`${pages.tags}/${tag._id}`}
               className="shadow-light100_darknone"
             >
-              <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 sm:w-[260px]">
+              <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-[260px]">
                 <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5">
                   <p className="paragraph-semibold text-dark300_light900">
                     {tag.name}
@@ -65,6 +70,13 @@ const Tags = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </section>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext!}
+        />
+      </div>
     </>
   );
 };

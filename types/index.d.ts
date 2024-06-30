@@ -4,7 +4,7 @@ import { Schema, SortOrder } from "mongoose";
 
 export interface IGetAllTagsParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   filter?: string;
   searchQuery?: string;
 }
@@ -16,7 +16,7 @@ export interface IGetUserTopInteractedTagsParams {
 
 export interface IGetAllUsersParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   filter?: string;
   searchQuery?: string;
 }
@@ -40,9 +40,9 @@ export interface ICreateUserParams {
 
 export interface IGetQuestionAnswersParams {
   questionId: string;
-  sortBy?: string;
+  filter?: string;
   page?: number;
-  pageSize?: number;
+  limit?: number;
 }
 
 export interface ICreateAnswerParams {
@@ -88,7 +88,7 @@ export interface IGetQuestionParams {
 export interface IGetUserStatsParams {
   userId: string;
   page?: number;
-  pageSize?: number;
+  limit?: number;
 }
 
 export interface ICreateQuestionParams {
@@ -167,11 +167,9 @@ export interface IGetQuestionsParams {
   pageSize?: number;
   searchQuery?: string;
   filter?: string;
-  sort?:
-    | string
-    | {
-        [key: string]: SortOrder;
-      };
+  sort?: {
+    [key: string]: SortOrder;
+  };
   limit?: number;
 }
 
