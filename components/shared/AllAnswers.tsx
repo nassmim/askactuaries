@@ -9,6 +9,7 @@ import Image from "next/image";
 import { getTimeStamp } from "@lib/utils";
 import ParseHTML from "./ParseHTML";
 import { Votes } from "./Votes";
+import Pagination from "./Pagination";
 
 const AllAnswers = async ({
   question,
@@ -19,15 +20,20 @@ const AllAnswers = async ({
   question: PopulatedQuestionType;
   userId: string;
   page?: number;
-  filter?: number;
+  filter?: string;
 }) => {
   let result;
   try {
-    result = await getQuestionAnswers({ questionId: question._id });
+    result = await getQuestionAnswers({
+      questionId: question._id,
+      filter,
+      page,
+      limit: 1,
+    });
   } catch (error) {
     return;
   }
-  const answers = result.answers;
+  const { answers, isNext } = result;
 
   return (
     <div className="mt-11">
@@ -81,6 +87,10 @@ const AllAnswers = async ({
             <ParseHTML data={answer.content} />
           </article>
         ))}
+      </div>
+
+      <div className="mt-10 w-full">
+        <Pagination pageNumber={page ? +page : 1} isNext={isNext!} />
       </div>
     </div>
   );

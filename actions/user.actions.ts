@@ -85,7 +85,8 @@ export const getAllUsers = async (params: IGetAllUsersParams) => {
     throw new Error(error.message);
   });
 
-  const { page = 1, pageSize = 1, filter, searchQuery } = params;
+  const { page = 1, limit = 1, filter, searchQuery } = params;
+  const numberToSkip = (page - 1) * limit;
 
   const query: FilterQuery<typeof User> = {};
 
@@ -96,8 +97,26 @@ export const getAllUsers = async (params: IGetAllUsersParams) => {
     ];
   }
 
+  let sortOptions = {};
+  switch (filter) {
+    case "new_users":
+      sortOptions = { joinedAt: -1 };
+      break;
+    case "old_users":
+      sortOptions = { joinedAt: 1 };
+      break;
+    case "top_contributors":
+      sortOptions = { reputation: -1 };
+      break;
+    default:
+      break;
+  }
+
+  const totalUsers = await User.countDocuments(query);
   const users = await User.find(query)
-    .sort({ createdAt: -1 })
+    .skip(numberToSkip)
+    .limit(limit)
+    .sort(sortOptions)
     .catch((error) => {
       throw new Error(
         "Issue while trying to fetch the users: " +
@@ -105,7 +124,9 @@ export const getAllUsers = async (params: IGetAllUsersParams) => {
       );
     });
 
-  return { users };
+  const isNext = totalUsers > numberToSkip + users.length;
+
+  return { users, isNext };
 };
 
 export const deleteUser = async (params: IDeleteUserParams) => {

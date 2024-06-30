@@ -2,33 +2,51 @@
 
 import { Tag, User } from "@database";
 import { connectToDB } from "@lib/mongoose";
-import {
-  IGetAllTagsParams,
-  IGetUserTopInteractedTagsParams,
-  PopulatedTagType,
-} from "@types";
+import { IGetAllTagsParams, IGetUserTopInteractedTagsParams } from "@types";
 import { FilterQuery } from "mongoose";
 
-export const getAllTags = async (
-  params: IGetAllTagsParams,
-): Promise<{ tags: PopulatedTagType[] }> => {
+export const getAllTags = async (params: IGetAllTagsParams) => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });
 
-  const { page = 1, pageSize = 1, filter, searchQuery } = params;
-
+  const { filter, searchQuery, page = 1, limit = 0 } = params;
+  const numberToSkip = (page - 1) * limit;
   const query: FilterQuery<typeof Tag> = {};
+
+  let sortOptions = {};
+  switch (filter) {
+    case "popular":
+      sortOptions = { questions: -1 };
+      break;
+    case "recent":
+      sortOptions = { createdAt: -1 };
+      break;
+    case "old":
+      sortOptions = { createdAt: 1 };
+      break;
+    case "name":
+      sortOptions = { name: 1 };
+      break;
+  }
 
   if (searchQuery)
     query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
-  const tags = await Tag.find(query).catch((error) => {
-    throw new Error(
-      "Issue while trying to fetch the tags: " +
-        (error instanceof Error ? error.message : error),
-    );
-  });
-  return { tags };
+  const tags = await Tag.find(query)
+    .skip(numberToSkip)
+    .limit(limit)
+    .sort(sortOptions)
+    .catch((error) => {
+      throw new Error(
+        "Issue while trying to fetch the tags: " +
+          (error instanceof Error ? error.message : error),
+      );
+    });
+
+  const totalTags = await Tag.countDocuments(query);
+  const isNext = totalTags > numberToSkip + tags.length;
+
+  return { tags, isNext };
 };
 
 export const getUserTopInteractedTags = async (

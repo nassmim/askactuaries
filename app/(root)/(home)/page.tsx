@@ -2,6 +2,7 @@ import { getQuestions } from "@actions/question.actions";
 import QuestionCard from "@components/cards/QuestionCard";
 import SearchFilter from "@components/home/SearchFilter";
 import NoResult from "@components/shared/NoResult";
+import Pagination from "@components/shared/Pagination";
 import Filter from "@components/shared/filter/FilterSelect";
 import LocalSearchBar from "@components/shared/search/LocalSearchBar";
 import { Button } from "@components/ui/button";
@@ -15,12 +16,15 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
   try {
     result = await getQuestions({
       searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams?.page ? +searchParams.page : 1,
+      limit: 3,
     });
   } catch (error) {
     return;
   }
 
-  const questions = result.questions;
+  const { questions, isNext } = result;
 
   return (
     <>
@@ -67,6 +71,12 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
             linkLabel="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext!}
+        />
       </div>
     </>
   );

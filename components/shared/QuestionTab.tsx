@@ -1,6 +1,7 @@
 import { getQuestions } from "@actions/question.actions";
 import QuestionCard from "@components/cards/QuestionCard";
 import { SearchParamsProps } from "@types";
+import Pagination from "./Pagination";
 
 interface IQuestionTabProps extends SearchParamsProps {
   userId: string;
@@ -8,20 +9,39 @@ interface IQuestionTabProps extends SearchParamsProps {
 }
 
 const QuestionTab = async ({
-  searchProps,
+  searchParams,
   userId,
   clerkId,
 }: IQuestionTabProps) => {
   let result;
   try {
-    result = await getQuestions({ userId });
+    result = await getQuestions({
+      userId,
+      page: searchParams?.page ? +searchParams.page : 1,
+      limit: 3,
+    });
   } catch (error) {
     return;
   }
 
-  return result.questions.map((question) => (
-    <QuestionCard key={question._id} question={question} clerkId={clerkId} />
-  ));
+  const { questions, isNext } = result;
+
+  return (
+    <>
+      {questions.map((question) => (
+        <QuestionCard
+          key={question._id}
+          question={question}
+          clerkId={clerkId}
+        />
+      ))}
+      ;
+      <Pagination
+        pageNumber={searchParams?.page ? +searchParams.page : 1}
+        isNext={isNext!}
+      />
+    </>
+  );
 };
 
 export default QuestionTab;

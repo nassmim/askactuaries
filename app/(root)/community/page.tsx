@@ -6,18 +6,22 @@ import { pages } from "@constants";
 import Link from "next/link";
 import UserCard from "@components/cards/UserCard";
 import { SearchParamsProps } from "@types";
+import Pagination from "@components/shared/Pagination";
 
 const Community = async ({ searchParams }: SearchParamsProps) => {
   let result;
   try {
     result = await getAllUsers({
       searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams?.page ? +searchParams.page : 1,
+      limit: 5,
     });
   } catch (error) {
     return;
   }
 
-  const users = result.users;
+  const { users, isNext } = result;
 
   return (
     <>
@@ -49,6 +53,13 @@ const Community = async ({ searchParams }: SearchParamsProps) => {
           </div>
         )}
       </section>
+
+      <div className="mt-10">
+        <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={isNext!}
+        />
+      </div>
     </>
   );
 };

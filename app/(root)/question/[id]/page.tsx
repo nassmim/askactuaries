@@ -9,11 +9,18 @@ import Tag from "@components/shared/Tag";
 import { Votes } from "@components/shared/Votes";
 import { pages } from "@constants";
 import { formatNumber, getTimeStamp } from "@lib/utils";
+import { ParamsProps, SearchParamsProps } from "@types";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Question = async ({ params, searchParams }) => {
+const Question = async ({
+  params,
+  searchParams,
+}: {
+  params: ParamsProps["params"];
+  searchParams: SearchParamsProps["searchParams"];
+}) => {
   let question;
   try {
     question = await getQuestion({ questionId: params.id });
@@ -96,7 +103,12 @@ const Question = async ({ params, searchParams }) => {
         ))}
       </div>
 
-      <AllAnswers question={question} userId={user._id} />
+      <AllAnswers
+        question={question}
+        userId={user._id}
+        filter={searchParams?.filter}
+        page={searchParams?.page ? +searchParams?.page : 1}
+      />
       <Answer
         questionId={JSON.stringify(question._id)}
         authorId={JSON.stringify(question.author._id)}

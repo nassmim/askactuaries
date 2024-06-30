@@ -100,7 +100,7 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
           <TabsContent value="top-posts">
             <QuestionTab
               searchParams={searchParams}
-              userId={user.userId}
+              userId={user._id}
               clerkId={clerkId!}
             />
           </TabsContent>
