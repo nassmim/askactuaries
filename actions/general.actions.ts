@@ -57,7 +57,7 @@ const searchGlobally = async (params: IGlobalSearchParams) => {
   ];
 
   console.log(type);
-  const typeLowercase = type?.toLowerCase();
+  const typeLowercase = type?.toLowerCase() as SearchableType;
 
   try {
     if (!typeLowercase || !searchableTypes.includes(typeLowercase)) {

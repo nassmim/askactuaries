@@ -52,7 +52,7 @@ export const getQuestions = async (params: IGetQuestionsParams) => {
     throw new Error(error.message);
   });
 
-  let result;
+  let result: { tag?: any; totalQuestions?: any; questions: any; isNext: any };
   const {
     clerkId,
     userId,
