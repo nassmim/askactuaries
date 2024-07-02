@@ -56,7 +56,6 @@ const searchGlobally = async (params: IGlobalSearchParams) => {
     { type: "tag", model: Tag, searchField: "name" },
   ];
 
-  console.log(type);
   const typeLowercase = type?.toLowerCase() as SearchableType;
 
   try {

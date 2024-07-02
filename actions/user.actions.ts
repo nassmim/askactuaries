@@ -5,7 +5,6 @@ import User from "@database/user.model";
 import { connectToDB } from "@lib/mongoose";
 import { assignBadges } from "@lib/utils";
 import {
-  BadgeCriteriaType,
   ICreateUserParams,
   IDeleteUserParams,
   IGetAllUsersParams,
@@ -15,7 +14,6 @@ import {
 } from "@types";
 import { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
-import { FilterEnum } from "zod";
 
 export const createUser = async (params: ICreateUserParams) => {
   await connectToDB().catch((error: Error) => {
@@ -121,23 +119,23 @@ export const getUserProfile = async (params: IGetUserParams) => {
 
   const criteria = [
     {
-      type: "QUESTION_COUNT" as BadgeCriteriaType,
+      type: "QUESTION_COUNT" as const,
       count: totalQuestions as number,
     },
     {
-      type: "ANSWER_COUNT" as BadgeCriteriaType,
+      type: "ANSWER_COUNT" as const,
       count: totalAnswers as number,
     },
     {
-      type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+      type: "QUESTION_UPVOTES" as const,
       count: (questionUpvotes?.totalUpvotes || 0) as number,
     },
     {
-      type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+      type: "ANSWER_UPVOTES" as const,
       count: (answerUpvotes?.totalUpvotes || 0) as number,
     },
     {
-      type: "TOTAL_VIEWS" as BadgeCriteriaType,
+      type: "TOTAL_VIEWS" as const,
       count: (questionViews?.totalViews || 0) as number,
     },
   ];
