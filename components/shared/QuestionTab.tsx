@@ -1,6 +1,6 @@
 import { getQuestions } from "@actions/question.actions";
 import QuestionCard from "@components/cards/QuestionCard";
-import { SearchParamsProps } from "@types";
+import { IGetQuestionsReturnType, SearchParamsProps } from "@types";
 import Pagination from "./Pagination";
 
 interface IQuestionTabProps extends SearchParamsProps {
@@ -24,7 +24,7 @@ const QuestionTab = async ({
     return;
   }
 
-  const { questions, isNext } = result;
+  const { questions, isNext } = result as IGetQuestionsReturnType;
 
   return (
     <>

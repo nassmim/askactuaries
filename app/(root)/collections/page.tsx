@@ -7,7 +7,7 @@ import Filter from "@components/shared/filter/FilterSelect";
 import LocalSearchBar from "@components/shared/search/LocalSearchBar";
 import { pages } from "@constants";
 import { QuestionFilters } from "@constants/filters";
-import { SearchParamsProps } from "@types";
+import { IGetQuestionsReturnType, SearchParamsProps } from "@types";
 
 const Collections = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();
@@ -27,7 +27,7 @@ const Collections = async ({ searchParams }: SearchParamsProps) => {
     return;
   }
 
-  const { questions, isNext } = result;
+  const { questions, isNext } = result as IGetQuestionsReturnType;
 
   return (
     <>

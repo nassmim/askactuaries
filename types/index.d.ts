@@ -1,4 +1,4 @@
-import { BADGE_CRITERIA, RouteType } from "@/constants";
+import { RouteType } from "@/constants";
 import { IUser } from "@database";
 import { Schema, SortOrder } from "mongoose";
 
@@ -131,6 +131,7 @@ interface QuestionType {
   content: string;
   author: AuthorType;
   upvotes: UserType[];
+  downvotes: UserType[];
   views: number;
   createdAt: Date;
 }
@@ -265,4 +266,9 @@ export interface BadgeCounts {
   BRONZE: number;
 }
 
-export type BadgeCriteriaType = keyof typeof BADGE_CRITERIA;
+export interface IGetQuestionsReturnType {
+  questions: PopulatedQuestionType[];
+  totalQuestions?: number;
+  tag?: PopulatedTagType;
+  isNext: boolean;
+}

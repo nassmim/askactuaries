@@ -4,7 +4,11 @@ import NoResult from "@components/shared/NoResult";
 import Pagination from "@components/shared/Pagination";
 import LocalSearchBar from "@components/shared/search/LocalSearchBar";
 import { pages } from "@constants";
-import { PopulatedQuestionType, TagType, URLProps } from "@types";
+import {
+  IGetQuestionsReturnType,
+  PopulatedQuestionType,
+  URLProps,
+} from "@types";
 import React from "react";
 
 const TagQuestions = async ({ params, searchParams }: URLProps) => {
@@ -21,11 +25,11 @@ const TagQuestions = async ({ params, searchParams }: URLProps) => {
   }
 
   const {
-    tag,
+    tag: tagFromAction,
     questions,
     isNext,
-  }: { tag: TagType; questions: PopulatedQuestionType[]; isNext: boolean } =
-    result;
+  } = result as IGetQuestionsReturnType;
+  const tag = tagFromAction!;
 
   return (
     <>

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { formURLQuery, removeKeysFromQuery } from "@lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import GlobalResults from "./GlobalResults";
@@ -16,7 +16,7 @@ const GlobalSearch = () => {
   const [isOpen, setIsOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearch(value);
 

@@ -11,7 +11,7 @@ import LocalSearchBar from "@components/shared/search/LocalSearchBar";
 import { Button } from "@components/ui/button";
 import { pages } from "@constants";
 import { HomePageFilters } from "@constants/filters";
-import { SearchParamsProps } from "@types";
+import { IGetQuestionsReturnType, SearchParamsProps } from "@types";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
@@ -49,7 +49,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
     return;
   }
 
-  const { questions, isNext } = result;
+  const { questions, isNext } = result as IGetQuestionsReturnType;
 
   return (
     <>

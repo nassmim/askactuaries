@@ -17,6 +17,8 @@ import {
   IDeleteQuestionParams,
   IEditQuestionParams,
   RecommendedParams,
+  PopulatedQuestionType,
+  IGetQuestionsReturnType,
 } from "@types";
 import { Schema } from "mongoose";
 import { revalidatePath } from "next/cache";
@@ -24,7 +26,9 @@ import { getUpdateQuery } from "./general.actions";
 
 type QuestionFilterType = FilterQuery<typeof Question>;
 
-export const getQuestion = async (params: IGetQuestionParams) => {
+export const getQuestion = async (
+  params: IGetQuestionParams,
+): Promise<PopulatedQuestionType | Error> => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });
@@ -47,7 +51,9 @@ export const getQuestion = async (params: IGetQuestionParams) => {
   }
 };
 
-export const getQuestions = async (params: IGetQuestionsParams) => {
+export const getQuestions = async (
+  params: IGetQuestionsParams,
+): Promise<IGetQuestionsReturnType | Error> => {
   await connectToDB().catch((error: Error) => {
     throw new Error(error.message);
   });
