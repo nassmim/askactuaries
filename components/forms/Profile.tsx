@@ -74,14 +74,14 @@ const Profile = ({ user }: { user: string }) => {
           name="name"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
                 Name<span className="text-primary-500"></span>
               </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Your name"
                   {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700"
+                  className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700"
                 />
               </FormControl>
               <FormMessage />
@@ -93,14 +93,14 @@ const Profile = ({ user }: { user: string }) => {
           name="username"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
                 Username<span className="text-primary-500"></span>
               </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Your username"
                   {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700"
+                  className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700"
                 />
               </FormControl>
               <FormMessage />
@@ -112,14 +112,14 @@ const Profile = ({ user }: { user: string }) => {
           name="location"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
                 Location<span className="text-primary-500"></span>
               </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Your Location"
                   {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700"
+                  className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700"
                 />
               </FormControl>
               <FormMessage />
@@ -131,7 +131,7 @@ const Profile = ({ user }: { user: string }) => {
           name="portfolioURL"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
                 Portfolio<span className="text-primary-500"></span>
               </FormLabel>
               <FormControl>
@@ -139,7 +139,7 @@ const Profile = ({ user }: { user: string }) => {
                   type="url"
                   placeholder="Your portfolio url"
                   {...field}
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700"
+                  className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700"
                 />
               </FormControl>
               <FormMessage />
@@ -152,12 +152,12 @@ const Profile = ({ user }: { user: string }) => {
           name="bio"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">
                 Bio<span className="text-primary-500"></span>
               </FormLabel>
               <FormControl>
                 <Textarea
-                  className="no-focus paragraph-regular light-border-2 background-light700_dark300 text-dark300_light700"
+                  className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700"
                   {...field}
                 />
               </FormControl>

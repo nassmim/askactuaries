@@ -102,7 +102,10 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
               Answers
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="top-posts">
+          <TabsContent
+            value="top-posts"
+            className="mt-5 flex w-full flex-col gap-6"
+          >
             <QuestionTab
               searchParams={searchParams}
               userId={user._id}

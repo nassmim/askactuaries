@@ -54,27 +54,29 @@ const QuestionCard = ({
           textStyles="body-medium text-dark400_light700"
           isAuthor
         />
-        <Metric
-          image="/assets/icons/like.svg"
-          alt="Upvotes"
-          value={formatNumber(question.upvotes.length)}
-          title={`${question.upvotes.length > 1 ? "Upvotes" : "Upvote"}`}
-          textStyles="small-medium text-dark400_light800"
-        />
-        <Metric
-          image="/assets/icons/message.svg"
-          alt="messages"
-          value={formatNumber(question.answers.length)}
-          title={`${question.answers.length > 1 ? "Answers" : "Answer"}`}
-          textStyles="small-medium text-dark400_light800"
-        />
-        <Metric
-          image="/assets/icons/eye.svg"
-          alt="views"
-          value={formatNumber(question.views)}
-          title={`${question.views > 1 ? "Views" : "View"}`}
-          textStyles="small-medium text-dark400_light800"
-        />
+        <div className="flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start">
+          <Metric
+            image="/assets/icons/like.svg"
+            alt="Upvotes"
+            value={formatNumber(question.upvotes.length)}
+            title={`${question.upvotes.length > 1 ? "Upvotes" : "Upvote"}`}
+            textStyles="small-medium text-dark400_light800"
+          />
+          <Metric
+            image="/assets/icons/message.svg"
+            alt="messages"
+            value={formatNumber(question.answers.length)}
+            title={`${question.answers.length > 1 ? "Answers" : "Answer"}`}
+            textStyles="small-medium text-dark400_light800"
+          />
+          <Metric
+            image="/assets/icons/eye.svg"
+            alt="views"
+            value={formatNumber(question.views)}
+            title={`${question.views > 1 ? "Views" : "View"}`}
+            textStyles="small-medium text-dark400_light800"
+          />
+        </div>
       </div>
     </div>
   );
