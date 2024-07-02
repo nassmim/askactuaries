@@ -1,6 +1,7 @@
 "use server";
 import { Answer, Question, Tag, User } from "@database";
 import { connectToDB } from "@lib/mongoose";
+import { IGlobalSearchParams } from "@types";
 
 const getUpdateQuery = (
   userId: string,
