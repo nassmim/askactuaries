@@ -5,6 +5,7 @@ import Tag from "./shared/Tag";
 import { pages } from "@constants";
 import { getQuestions } from "@actions/question.actions";
 import { getPopularTags } from "@actions/tag.actions";
+import { IGetQuestionsReturnType } from "@types";
 
 const RightSidebar = async () => {
   const result = await getQuestions({
@@ -14,7 +15,7 @@ const RightSidebar = async () => {
     return { questions: [] };
   });
 
-  const hotQuestions = result.questions;
+  const hotQuestions = (result as IGetQuestionsReturnType).questions;
 
   const popularTags = await getPopularTags().catch(() => []);
 

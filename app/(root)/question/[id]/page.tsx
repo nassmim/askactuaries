@@ -9,7 +9,7 @@ import Tag from "@components/shared/Tag";
 import { Votes } from "@components/shared/Votes";
 import { pages } from "@constants";
 import { formatNumber, getTimeStamp } from "@lib/utils";
-import { ParamsProps, SearchParamsProps } from "@types";
+import { ParamsProps, PopulatedQuestionType, SearchParamsProps } from "@types";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -21,13 +21,14 @@ const Question = async ({
   params: ParamsProps["params"];
   searchParams: SearchParamsProps["searchParams"];
 }) => {
-  let question;
+  let result;
   try {
-    question = await getQuestion({ questionId: params.id });
+    result = await getQuestion({ questionId: params.id });
   } catch (error) {
     return;
   }
 
+  const question = result as PopulatedQuestionType;
   const author = question.author;
 
   let user;
