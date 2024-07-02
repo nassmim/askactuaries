@@ -3,6 +3,7 @@ import { voteAnswer } from "@actions/answer.actions";
 import { viewQuestion } from "@actions/interaction.actions";
 import { voteQuestion } from "@actions/question.actions";
 import { toggleSaveQuestion } from "@actions/user.actions";
+import { toast } from "@components/ui/use-toast";
 import { formatNumber } from "@lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -76,10 +77,15 @@ export const Votes = ({
       userId: JSON.parse(userId),
       path,
     });
+    return toast({
+      title: hasSaved ? "Removed from bookmarks" : "Bookmarked",
+      variant: hasSaved ? "destructive" : "default",
+    });
   };
 
   const handleVote = async (action: string) => {
-    if (!userId) return;
+    if (!userId)
+      return toast({ title: "Please login", description: "Please login" });
 
     if (type === "question") {
       await voteQuestion({
@@ -100,6 +106,25 @@ export const Votes = ({
         path,
       });
     }
+
+    toast({
+      title:
+        action === "upvote"
+          ? hasUpVoted
+            ? "Upvote Removed"
+            : "Upvote done successfully"
+          : hasDownVoted
+            ? "downvote Removed"
+            : "Downvote done successfully",
+      variant:
+        action === "upvote"
+          ? hasUpVoted
+            ? "destructive"
+            : "default"
+          : hasDownVoted
+            ? "destructive"
+            : "default",
+    });
   };
 
   useEffect(() => {

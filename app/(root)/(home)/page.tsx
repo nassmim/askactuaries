@@ -1,4 +1,7 @@
-import { getQuestions } from "@actions/question.actions";
+import {
+  getQuestions,
+  getRecommendedQuestions,
+} from "@actions/question.actions";
 import QuestionCard from "@components/cards/QuestionCard";
 import SearchFilter from "@components/home/SearchFilter";
 import NoResult from "@components/shared/NoResult";
@@ -10,10 +13,32 @@ import { pages } from "@constants";
 import { HomePageFilters } from "@constants/filters";
 import { SearchParamsProps } from "@types";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
+
+export const metadata: Metadata = {
+  title: "Hiome | Ask Devs",
+  description: "Platform to ask devs and receive help",
+};
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
+  const { userId } = auth();
   let result;
   try {
+    if (searchParams.filter === "recommended") {
+      if (userId)
+        result = await getRecommendedQuestions({
+          userId,
+          searchQuery: searchParams.q,
+          page: searchParams.page ? +searchParams.page : 1,
+          limit: 3,
+        });
+      else
+        result = {
+          questions: [],
+          isNext: false,
+        };
+    }
     result = await getQuestions({
       searchQuery: searchParams.q,
       filter: searchParams.filter,
