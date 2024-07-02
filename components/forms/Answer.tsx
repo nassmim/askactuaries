@@ -13,7 +13,7 @@ import { useTheme } from "@context/ThemeProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnswerFormSchema, answerFormFields } from "@lib/validations";
 import { Editor } from "@tinymce/tinymce-react";
-import Image from "next/image";
+// import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,7 +32,7 @@ const Answer = ({
   const pathName = usePathname();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
+  // const [isSubmittingAI, setIsSubmittingAI] = useState(false);
   const editorRef = useRef();
 
   const form = useForm<z.infer<typeof AnswerFormSchema>>({
@@ -42,28 +42,27 @@ const Answer = ({
     },
   });
 
-  const generateAIAnswer = async () => {
-    setIsSubmittingAI(true);
-    console.log(JSON.stringify(questionContent));
-    let response;
-    try {
-      response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
-        {
-          method: "POST",
-          body: JSON.stringify({ questionContent }),
-        },
-      );
-    } catch (error) {
-      return;
-    }
+  // const generateAIAnswer = async () => {
+  //   setIsSubmittingAI(true);
+  //   console.log(JSON.stringify(questionContent));
+  //   let response;
+  //   try {
+  //     response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+  //       {
+  //         method: "POST",
+  //         body: JSON.stringify({ questionContent }),
+  //       },
+  //     );
+  //   } catch (error) {
+  //     return;
+  //   }
 
-    const aiAnswer = await response.json();
-    const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br/>");
-    console.log(formattedAnswer);
-    if (editorRef.current)
-      (editorRef.current as any).setContent(formattedAnswer);
-  };
+  //   const aiAnswer = await response.json();
+  //   const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br/>");
+  //   if (editorRef.current)
+  //     (editorRef.current as any).setContent(formattedAnswer);
+  // };
 
   const onSubmitAnswer = async (values: z.infer<typeof AnswerFormSchema>) => {
     setIsSubmitting(true);

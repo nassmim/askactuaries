@@ -142,13 +142,13 @@ export const getUserProfile = async (params: IGetUserParams) => {
     },
   ];
 
-  const badgeCounts = assignBadges({ criteria });
+  const badgesCounts = assignBadges({ criteria });
 
   return {
     user,
     totalQuestions,
     totalAnswers,
-    badgeCounts,
+    badgesCounts,
     reputation: user.reputation,
   };
 };

@@ -1,4 +1,3 @@
-import { getProfile } from "@actions/profile.actions";
 import { getUser } from "@actions/user.actions";
 import { auth } from "@clerk/nextjs/server";
 import Profile from "@components/forms/Profile";
