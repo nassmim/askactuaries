@@ -65,4 +65,4 @@ export const BADGE_CRITERIA = {
     SILVER: 10000,
     GOLD: 100000,
   },
-};
+} as const;

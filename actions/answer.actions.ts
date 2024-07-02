@@ -1,7 +1,6 @@
 "use server";
 
-import { Question } from "@database";
-import Answer from "@database/answer.model";
+import { Question, Answer, Interaction, User } from "@database";
 import { connectToDB } from "@lib/mongoose";
 import {
   IAnswerVoteParams,
@@ -12,7 +11,6 @@ import {
 } from "@types";
 import { revalidatePath } from "next/cache";
 import { getUpdateQuery } from "./general.actions";
-import Interaction from "@database/interaction.models";
 
 export const createAnswer = async (params: ICreateAnswerParams) => {
   await connectToDB().catch((error: Error) => {
@@ -36,6 +34,21 @@ export const createAnswer = async (params: ICreateAnswerParams) => {
         (error instanceof Error ? error.message : error),
     );
   }
+
+  try {
+    await Interaction.create({
+      user: author,
+      action: "answer",
+      question: questionId,
+    });
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 10 } });
+  } catch (error) {
+    throw new Error(
+      "Error raised while trying to update the user's reputation" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
   revalidatePath(path);
 };
 
@@ -94,11 +107,40 @@ export const voteAnswer = async (params: IAnswerVoteParams) => {
   const { answerId, userId, hasUpVoted, hasDownVoted, action, path } = params;
   const updateQuery = getUpdateQuery(userId, hasUpVoted, hasDownVoted, action);
 
+  let answer;
   try {
-    await Answer.findByIdAndUpdate(answerId, updateQuery);
+    answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    });
   } catch (error) {
     throw new Error(
       "Error while trying to vote a answer" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  try {
+    await User.findByIdAndUpdate(userId, {
+      $inc: {
+        reputation:
+          action === "upvote" ? (hasUpVoted ? -2 : 2) : hasDownVoted ? 2 : -2,
+      },
+    });
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: {
+        reputation:
+          action === "upvote"
+            ? hasUpVoted
+              ? -10
+              : 10
+            : hasDownVoted
+              ? 10
+              : -10,
+      },
+    });
+  } catch (error) {
+    throw new Error(
+      "Error raised while trying to update the voting and the posting users' reputation" +
         (error instanceof Error ? error.message : error),
     );
   }

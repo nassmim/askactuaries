@@ -3,7 +3,9 @@ import { Question } from "@database";
 import Answer from "@database/answer.model";
 import User from "@database/user.model";
 import { connectToDB } from "@lib/mongoose";
+import { assignBadges } from "@lib/utils";
 import {
+  BadgeCriteriaType,
   ICreateUserParams,
   IDeleteUserParams,
   IGetAllUsersParams,
@@ -74,10 +76,81 @@ export const getUserProfile = async (params: IGetUserParams) => {
 
   if (!user) throw new Error("User not found");
 
-  const totalQuestions = await Question.countDocuments({ author: user._id });
-  const totalAnswers = await Answer.countDocuments({ author: user._id });
+  let totalQuestions,
+    totalAnswers,
+    questionUpvotes,
+    answerUpvotes,
+    questionViews;
+  try {
+    totalQuestions = await Question.countDocuments({ author: user._id });
+    totalAnswers = await Answer.countDocuments({ author: user._id });
+    [questionUpvotes] = await Question.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: { _id: 0, upvotes: { $size: "$upvotes" } },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+    [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: { _id: 0, upvotes: { $size: "$upvotes" } },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+    [questionViews] = await Question.aggregate([
+      { $match: { author: user._id } },
+      {
+        $group: {
+          _id: null,
+          totalViews: { $sum: "$views" },
+        },
+      },
+    ]);
+  } catch (error) {}
 
-  return { user, totalQuestions, totalAnswers };
+  const criteria = [
+    {
+      type: "QUESTION_COUNT" as BadgeCriteriaType,
+      count: totalQuestions as number,
+    },
+    {
+      type: "ANSWER_COUNT" as BadgeCriteriaType,
+      count: totalAnswers as number,
+    },
+    {
+      type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+      count: (questionUpvotes?.totalUpvotes || 0) as number,
+    },
+    {
+      type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+      count: (answerUpvotes?.totalUpvotes || 0) as number,
+    },
+    {
+      type: "TOTAL_VIEWS" as BadgeCriteriaType,
+      count: (questionViews?.totalViews || 0) as number,
+    },
+  ];
+
+  const badgeCounts = assignBadges({ criteria });
+
+  return {
+    user,
+    totalQuestions,
+    totalAnswers,
+    badgeCounts,
+    reputation: user.reputation,
+  };
 };
 
 export const getAllUsers = async (params: IGetAllUsersParams) => {
