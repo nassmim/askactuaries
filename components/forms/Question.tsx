@@ -23,12 +23,7 @@ import { createQuestion, editQuestion } from "@actions/question.actions";
 import { usePathname, useRouter } from "next/navigation";
 import { pages, themes } from "@constants";
 import { useTheme } from "@context/ThemeProvider";
-import { parse } from "path";
-import {
-  Populated,
-  PopulatedQuestionType,
-  PopulatedQuestionTypeQuestionType,
-} from "@types";
+import { PopulatedQuestionType } from "@types";
 
 type FormType = z.infer<typeof QuestionFormSchema>;
 

@@ -24,8 +24,7 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
     return;
   }
 
-  const { user, totalQuestions, totalAnswers, badgesCounts, reputation } =
-    result;
+  const { user, totalQuestions, totalAnswers, badgesCounts } = result;
 
   return (
     <>
