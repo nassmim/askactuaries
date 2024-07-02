@@ -1,4 +1,5 @@
 import { formatNumber } from "@lib/utils";
+import { BadgeCounts } from "@types";
 import Image from "next/image";
 
 const StatsCard = ({
@@ -24,9 +25,11 @@ const StatsCard = ({
 const Stats = ({
   totalQuestions,
   totalAnswers,
+  badges,
 }: {
   totalQuestions: number;
   totalAnswers: number;
+  badges: BadgeCounts;
 }) => {
   return (
     <div className="mt-10">

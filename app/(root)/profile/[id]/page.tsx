@@ -24,7 +24,8 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
     return;
   }
 
-  const { user, totalQuestions, totalAnswers } = result;
+  const { user, totalQuestions, totalAnswers, badgesCounts, reputation } =
+    result;
 
   return (
     <>
@@ -86,7 +87,11 @@ const ProfileUser = async ({ params, searchParams }: URLProps) => {
           </SignedIn>
         </div>
       </div>
-      <Stats totalQuestions={totalQuestions} totalAnswers={totalAnswers} />
+      <Stats
+        totalQuestions={totalQuestions as number}
+        totalAnswers={totalAnswers as number}
+        badges={badgesCounts}
+      />
       <div className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-[42px] p-1">

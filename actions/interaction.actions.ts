@@ -1,7 +1,6 @@
 "use server";
 
-import { Question } from "@database";
-import Interaction from "@database/interaction.models";
+import { Question, Interaction } from "@database";
 import { connectToDB } from "@lib/mongoose";
 import { IViewQuestionParams } from "@types";
 import { revalidatePath } from "next/cache";

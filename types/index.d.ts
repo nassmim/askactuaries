@@ -238,6 +238,11 @@ export interface SearchParamsProps {
   searchParams: { [key: string]: string | undefined };
 }
 
+export interface IGlobalSearchParams {
+  query?: string | null;
+  type?: string | null;
+}
+
 export interface IGetUserParams {
   userId: string;
 }

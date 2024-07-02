@@ -15,7 +15,7 @@ const AuthButton = ({
   className: string;
 }) => {
   return (
-    <Link href={`/${route}`}>
+    <Link href={`${route}`}>
       <Button className={className}>
         {label}
         {children}

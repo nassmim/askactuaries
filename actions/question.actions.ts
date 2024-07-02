@@ -1,6 +1,13 @@
 "use server";
 import { SortOrder, type FilterQuery } from "mongoose";
-import { IQuestion, Question, Tag, User } from "@database/index";
+import {
+  IQuestion,
+  Question,
+  Tag,
+  User,
+  Interaction,
+  Answer,
+} from "@database/index";
 import { connectToDB } from "@lib/mongoose";
 import {
   ICreateQuestionParams,
@@ -13,8 +20,6 @@ import {
 import { Schema } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { getUpdateQuery } from "./general.actions";
-import Answer from "@database/answer.model";
-import Interaction from "@database/interaction.models";
 
 type QuestionFilterType = FilterQuery<typeof Question>;
 
@@ -183,6 +188,21 @@ export const createQuestion = async (params: ICreateQuestionParams) => {
     );
   }
 
+  try {
+    await Interaction.create({
+      user: author,
+      action: "askQuestion",
+      question: question._id,
+      tags: tagDocumentsIds,
+    });
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
+  } catch (error) {
+    throw new Error(
+      "Error raised while trying to update the user's reputation" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
   revalidatePath(path);
 };
 
@@ -213,11 +233,40 @@ export const voteQuestion = async (params: IQuestionVoteParams) => {
   const { questionId, userId, hasUpVoted, hasDownVoted, action, path } = params;
   const updateQuery = getUpdateQuery(userId, hasUpVoted, hasDownVoted, action);
 
+  let question;
   try {
-    await Question.findByIdAndUpdate(questionId, updateQuery);
+    question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    });
   } catch (error) {
     throw new Error(
       "Error while trying to vote a question" +
+        (error instanceof Error ? error.message : error),
+    );
+  }
+
+  try {
+    await User.findByIdAndUpdate(userId, {
+      $inc: {
+        reputation:
+          action === "upvote" ? (hasUpVoted ? -1 : 1) : hasDownVoted ? 1 : -1,
+      },
+    });
+    await User.findByIdAndUpdate(question.author, {
+      $inc: {
+        reputation:
+          action === "upvote"
+            ? hasUpVoted
+              ? -10
+              : 10
+            : hasDownVoted
+              ? 10
+              : -10,
+      },
+    });
+  } catch (error) {
+    throw new Error(
+      "Error raised while trying to update the voting and the posting users' reputation" +
         (error instanceof Error ? error.message : error),
     );
   }
@@ -348,7 +397,7 @@ async function getUserQuestions(
     questions = await Question.find({ author: userId })
       .skip(numberToSkip)
       .limit(limit)
-      .sort({ views: -1, upvotes: -1 })
+      .sort({ createdAt: -1, views: -1, upvotes: -1 })
       .populate("tags", "_id name")
       .populate("author", "_id clerkId name picture");
   } catch (error) {

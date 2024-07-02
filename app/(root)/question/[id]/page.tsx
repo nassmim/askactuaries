@@ -57,11 +57,11 @@ const Question = async ({
             <Votes
               type="question"
               itemId={JSON.stringify(question._id)}
-              userId={JSON.stringify(user._id)}
+              userId={JSON.stringify(user?._id)}
               upvotes={question.upvotes.length}
-              hasUpVoted={question.upvotes.includes(user._id)}
+              hasUpVoted={question.upvotes.includes(user?._id)}
               downvotes={question.downvotes.length}
-              hasDownVoted={question.downvotes.includes(user._id)}
+              hasDownVoted={question.downvotes.includes(user?._id)}
               hasSaved={user?.saved.includes(question._id)}
             />
           </div>
@@ -105,7 +105,7 @@ const Question = async ({
 
       <AllAnswers
         question={question}
-        userId={user._id}
+        userId={user?._id}
         filter={searchParams?.filter}
         page={searchParams?.page ? +searchParams?.page : 1}
       />
