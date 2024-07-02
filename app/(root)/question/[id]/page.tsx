@@ -110,6 +110,7 @@ const Question = async ({
         page={searchParams?.page ? +searchParams?.page : 1}
       />
       <Answer
+        questionContent={question.content as string}
         questionId={JSON.stringify(question._id)}
         authorId={JSON.stringify(question.author._id)}
       />

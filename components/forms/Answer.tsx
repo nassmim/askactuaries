@@ -20,9 +20,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const Answer = ({
+  questionContent,
   questionId,
   authorId,
 }: {
+  questionContent: string;
   questionId: string;
   authorId: string;
 }) => {
@@ -30,6 +32,7 @@ const Answer = ({
   const pathName = usePathname();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
   const editorRef = useRef();
 
   const form = useForm<z.infer<typeof AnswerFormSchema>>({
@@ -38,6 +41,29 @@ const Answer = ({
       answer: "",
     },
   });
+
+  const generateAIAnswer = async () => {
+    setIsSubmittingAI(true);
+    console.log(JSON.stringify(questionContent));
+    let response;
+    try {
+      response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+        {
+          method: "POST",
+          body: JSON.stringify({ questionContent }),
+        },
+      );
+    } catch (error) {
+      return;
+    }
+
+    const aiAnswer = await response.json();
+    const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br/>");
+    console.log(formattedAnswer);
+    if (editorRef.current)
+      (editorRef.current as any).setContent(formattedAnswer);
+  };
 
   const onSubmitAnswer = async (values: z.infer<typeof AnswerFormSchema>) => {
     setIsSubmitting(true);
@@ -64,16 +90,25 @@ const Answer = ({
         <h4 className="paragraph-semibold text-dark400_light800">
           Write your answer here
         </h4>
-        <Button className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500">
-          <Image
-            src="/assets/icons/stars.svg"
-            alt="star"
-            width={12}
-            height={12}
-            className="object-contain"
-          />
-          Generate an AI answer
-        </Button>
+        {/* <Button
+          className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
+          onClick={generateAIAnswer}
+        >
+          {isSubmittingAI ? (
+            <>Generating...</>
+          ) : (
+            <>
+              <Image
+                src="/assets/icons/stars.svg"
+                alt="star"
+                width={12}
+                height={12}
+                className="object-contain"
+              />
+              Generate an AI answer
+            </>
+          )}
+        </Button> */}
       </div>
       <Form {...form}>
         <form
